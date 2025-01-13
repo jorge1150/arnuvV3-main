@@ -1,0 +1,29 @@
+#uniqueRelative {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+#runningDog, #waggingDog {
+    position: absolute;
+    top: calc(50% - 25px);
+    width: 50px;
+    height: auto;
+}
+
+#runningDog {
+    right: 0;
+    animation: moveLeft 5s linear infinite;
+}
+
+@keyframes moveLeft {
+    0% {
+        right: -50px;
+        opacity: 1;
+    }
+    100% {
+        right: 100%;
+        opacity: 0;
+    }
+}

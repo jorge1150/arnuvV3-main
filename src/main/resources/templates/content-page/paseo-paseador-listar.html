@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html x-data="data()" xmlns:th="https://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{content-page/plantilla}">
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+<style>
+
+
+.estado-pendiente {
+    
+    color: #ee2e45; /* Texto negro */
+}
+
+.estado-aprobado {
+    
+    color: #5fa900; /* Texto blanco */
+}
+
+.estado-paseo-finalizado {
+    
+    color: #5fa900; /* Texto blanco */
+}
+
+.estado-finalizado {
+   
+    color: #2196f3; /* Texto blanco */
+}
+
+</style>
+</head>
+
+
+<body>
+
+	<div layout:fragment="espaciocontenidohtml">
+		<main class="h-full pb-16 overflow-y-auto">
+			<div class="container px-6 mx-auto grid comic-font">
+				<h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"> Mis paseos  de mascotas</h2>
+				
+				<div>
+				<a id="visualizarBoton" th:href="@{/paseo/buscarPorFecha}"
+				   class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">
+				   
+				   <i class="fas fa-search mr-2"> Buscar</i>
+				</a>
+				</div>
+				<h2 	class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
+				
+				
+
+				<table id="dataTable" class="w-full whitespace-no-wrap">
+					<thead>
+						<tr
+							class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
+							<th scope="col" class="text-primary">Fecha</th>
+							<th scope="col" class="text-primary">FechaPaseo</th>
+							<th scope="col" class="estado-column">PersonaPaseadora</th>
+							<th scope="col" class="estado-column">Mascota</th>
+							<th scope="col" class="estado-column">Tarifa</th>
+							<th scope="col" class="text-primary">Estado</th>
+							<th scope="col" class="text-primary">Visualizar</th>
+							
+						</tr>
+					</thead>
+					<tbody
+						class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+						<tr th:each="datos: ${lista}"
+							class="text-gray-700 dark:text-gray-400">
+							<td  class="px-4 py-3" th:text="${#dates.format(datos.fecha, 'yyyy-MM-dd')}"></td>
+							<td  class="px-4 py-3" th:text="${#dates.format(datos.fecharealinicio, 'yyyy-MM-dd hh:mm')}"></td>
+							<td class="estado-column" th:text="${datos.idpersonapasedor.nombres}+' '+${datos.idpersonapasedor.apellidos}"></td>
+							<td  class="estado-column" th:text="${datos.idMascota.nombre}"></td>
+							<td  class="estado-column" th:text="'$'+${datos.idtarifario.precio}"></td>
+							<td  class="px-4 py-3" th:text="${datos.estado}" th:classappend="${datos.estado == 'PENDIENTE' ? 'estado-pendiente' : 
+														                                    (datos.estado == 'APROBADO' ? 'estado-aprobado' : 
+														                                    (datos.estado == 'FINALIZADO' ? 'estado-finalizado' : 
+														                                    (datos.estado == 'RECHAZADO' ? 'estado-rechazado' : 
+														                                    (datos.estado == 'PASEO_FINALIZADO' ? 'estado-paseo-finalizado' : ''))))}"></td>
+
+							<td class="px-4 py-3">
+
+								<div class="flex items-center space-x-4 text-sm">
+
+
+									<div
+										class="bg-cream flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-text-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray">
+										<a id="visualizarBoton" th:href="@{/paseo/editarPaseador/}+ ${datos.id}"> <i>Visualizar
+												
+										</i>
+										</a>
+									</div>
+								</div>
+							</td>
+						</tr>
+						
+						
+					</tbody>
+				</table>
+				
+				<div
+				    class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray">
+				    <a id="toggleColumn" class="btn btn-outline-secondary" href="#" role="button">
+				        <i class="fas fa-chevron-down mr-1 text-secondary comic-font"> Col.</i>
+				    </a>
+				</div>
+								<script type="text/javascript">
+					$(document).ready(function() {
+						initDataTable();
+					});
+					window.addEventListener('resize', handleResize);
+				    window.addEventListener('load', handleResize); 
+				    document.getElementById('toggleColumn').addEventListener('click', toggleColumnVisibility);
+				</script>
+	
+
+				
+			</div>
+		</main>
+	</div>
+</body>
+</html>

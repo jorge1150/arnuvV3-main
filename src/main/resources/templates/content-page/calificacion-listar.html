@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html x-data="data()" xmlns:th="https://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{content-page/plantilla}">
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+
+	<div layout:fragment="espaciocontenidohtml">
+		<main class="h-full pb-16 overflow-y-auto">
+			<div class="container px-6 mx-auto grid comic-font">
+			<div class="flex items-center px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray">
+			    <span class="icon-combo" style="display: inline-flex; align-items: center; margin-right: 10px;">
+			        <i class="fas fa-walking" style="font-size: 24px; margin-right: 5px;"></i>
+			        <i class="fas fa-dog" style="font-size: 20px;"></i>
+			    </span>
+			    <span class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
+			        Mis calificaciones
+			    </span>
+			</div>
+				<div class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray">	</div>
+				<table id="dataTable" class="w-full whitespace-no-wrap">
+					<thead>
+						<tr
+							class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
+							<th scope="col" class="text-primary">Fecha</th>
+							<th scope="col" class="text-primary">fechaDelPaseo</th>
+							<th scope="col" class="estado-column">Cliente</th>
+							<th scope="col" class="text-primary">calificación</th>
+							<th scope="col" class="text-primary">Observación</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody
+						class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+						<tr th:each="datos: ${lista}"
+							class="text-gray-700 dark:text-gray-400">							
+							<td  th:text="${#dates.format(datos.fecha, 'yyyy-MM-dd')}"></td>
+							<td  th:text="${#dates.format(datos.idpaseo.fecha, 'yyyy-MM-dd')}"></td>
+							<td th:text="${datos.idpaseo.idpersonacliente.nombres}+' '+${datos.idpaseo.idpersonacliente.apellidos}" class="estado-column"></td>
+							<!--<td th:text="${datos.calificacion}"></td> -->
+							<td>
+							    <span th:each="i : ${#numbers.sequence(1, datos.calificacion)}">
+							        <i class="fas fa-star text-yellow-500"></i>
+							    </span>
+							    <span th:each="i : ${#numbers.sequence(1, 5 - datos.calificacion)}">
+							        <i class="fas fa-star text-gray-300"></i>
+							    </span>
+							</td>
+							<td th:text="${datos.idpaseo.observacionpaseador}"></td>
+							<td class="px-4 py-3">
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div
+				    class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray">
+				    <a id="toggleColumn" class="btn btn-outline-secondary" href="#" role="button">
+				        <i class="fas fa-chevron-down mr-1 text-secondary comic-font"> Col.</i>
+				    </a>
+				</div>
+				<script type="text/javascript">
+					$(document).ready(function() {
+						initDataTable();
+					});
+				    window.addEventListener('resize', handleResize);
+				    window.addEventListener('load', handleResize); 
+				    document.getElementById('toggleColumn').addEventListener('click', toggleColumnVisibility);
+				
+				</script>
+			</div>
+		</main>
+	</div>
+</body>
+</html>

@@ -1,0 +1,14 @@
+.comic-font {
+    font-family: 'Comic Sans MS', 'Comic Sans', cursive;
+}
+
+.bg-cream {
+    background-color: #fad7a0; /* Color crema */
+    color: black;
+    font-family: 'Comic Sans MS', 'Comic Sans', cursive;
+}
+
+.bg-cream:hover {
+    background-color: black; /* Cambia a negro al pasar el ratón */
+    color: white; /* Cambia el texto a blanco al pasar el ratón */
+}

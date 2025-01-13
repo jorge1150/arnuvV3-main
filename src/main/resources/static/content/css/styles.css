@@ -1,0 +1,23 @@
+.comic-font {
+    font-family: 'Arial', sans-serif;
+}
+
+.bg-cream {
+    background-color: #fad7a0; /* Color crema */
+    color: black;
+    font-family: 'Arial', sans-serif;
+}
+
+.bg-cream:hover {
+    background-color: black; /* Cambia a negro al pasar el ratón */
+    color: white; /* Cambia el texto a blanco al pasar el ratón */
+}
+
+
+#dataTable thead th {
+    background-color: #f9fafb; /* Color de fondo del encabezado */
+}
+
+#dataTable tbody tr:nth-child(odd) {
+    background-color: #f9fafb; /* Color de fondo para filas alternas */
+}

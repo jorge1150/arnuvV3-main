@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html x-data="data()" xmlns:th="https://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{content-page/plantilla}">
+<head>
+
+<script	th:src="@{${linkMapaGoogle.valorText}}"></script>
+<style>
+#map {
+	height: 300px;
+	width: 100%;
+}
+</style>
+
+<style>
+.readonly-select {
+	pointer-events: none; /* Evitar interacciones del usuario */
+	background-color: #e9ecef;
+	/* Color de fondo para parecer deshabilitado */
+	color: #6c757d; /* Color de texto para parecer deshabilitado */
+}
+</style>
+
+</head>
+<body>
+
+	<div layout:fragment="espaciocontenidohtml">
+		<main class="h-full overflow-y-auto">
+			<div class="container px-6 mx-auto grid comic-font">
+				<h2
+					class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
+					Paseo</h2>
+				<div
+					class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
+
+					<div id="map"></div>
+
+					<form th:action="@{/paseo/insertar}" th:object="${nuevo}"
+						class="form-material" method="post">
+
+						<div
+							class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
+							<div
+								class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-multiselect focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray">
+								<label class="float-label">Fecha</label> <input
+									type="datetime-local" name="fecha"
+									class="readonly-select block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-multiselect focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+									th:field="*{fecha}" required
+									min="[[${#dates.format(#dates.createNow(), 'yyyy-MM-dd\'T\'HH:mm')}]]"> <span
+									class="form-bar"></span>
+							</div>
+
+							<div
+								class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-multiselect focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray">
+								<label class="float-label">Fecha del paseo</label> <input
+									type="datetime-local" name="fecharealinicio"
+									id="fechapaseo"
+									class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-multiselect focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+									th:field="*{fecharealinicio}" required									
+        							onchange="handleDateChange(this)"> <span
+									class="form-bar"></span>
+							</div>							
+							
+							<h2	class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
+							<label class="block mt-4 text-sm"> <span class="text-gray-700 dark:text-gray-400"> Persona Paseadora </span> 
+							<select id="personaSelect"
+									th:field="*{idpersonapasedor.id}" required
+								class="readonly-select block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-multiselect focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray">
+									<option value="0" selected>Seleccione una persona</option>
+									<option th:each="persona : ${persona}"	th:text="${persona.nombres}" th:value="${persona.id}" ></option>
+
+							</select>
+							</label>
+
+							<h2
+								class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
+
+							<label class="block mt-4 text-sm"> <span class="text-gray-700 dark:text-gray-400"> Mascota </span> 
+							<select id="mascotaSelect"
+									th:field="*{idMascota.idmascota}" 
+									required
+									class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-multiselect focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray">
+									<option value="0" selected>Seleccione una mascota</option>
+									<option th:each="mascota : ${mascota}"
+											th:text="${mascota.nombre}" 
+											th:value="${mascota.idmascota}">
+									</option>
+
+							</select>
+							</label>
+
+
+							<h2
+								class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
+
+							<label class="block mt-4 text-sm"> <span class="text-gray-700 dark:text-gray-400"> Tiempo a pasear</span> 
+							<select id="opcionesTarifa" 
+									th:field="*{idtarifario.id}"
+									onchange="mostrarObservacionesLabel()" 
+									required
+								class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-multiselect focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray">
+									<option value="0" selected>Seleccione una tarifa</option>
+									<option th:each="tarifario : ${tarifario}"
+											th:text="${tarifario.nombre}+ '  valor : $'+${tarifario.precio} "
+											th:value="${tarifario.id}"
+											th:data-observacion="${tarifario.observacion}">
+									</option>
+
+							</select>
+							</label> 
+							<label id="resultadoObservacion" class="block mt-4 text-sm text-gray-700 dark:text-gray-400 "></label>
+
+							<h2
+								class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
+
+							<label class="block mt-4 text-sm"> <span
+								class="text-gray-700 dark:text-gray-400">Estado </span> <select
+								id="estadoSelect" th:field="*{estado}" required
+								class="readonly-select block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-multiselect focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray">
+
+									<option th:text="PENDIENTE" th:value="PENDIENTE"></option>
+									<option th:text="APROBADO" th:value="APROBADO"></option>
+									<option th:text="PASEO_FINALIZADO" th:value="PASEO_FINALIZADO"></option>
+									<option th:text="FINALIZADO" th:value="FINALIZADO"></option>
+
+							</select>
+							</label>
+
+							<h2
+								class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
+
+							<div>
+								<button type="submit"
+									class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">
+									Guardar</button>
+							</div>
+
+						</div>
+
+						<input type="hidden" th:field="*{id}">
+
+
+
+					</form>
+
+
+					<script>
+						document.addEventListener('DOMContentLoaded', function() {
+							DeshabilitarSelect('estadoSelect');
+						});
+						
+						document.addEventListener('DOMContentLoaded', function() {
+					        var now = new Date();					        
+					        var timezoneOffset = now.getTimezoneOffset() * 60000; 
+					        var localDate = new Date(now.getTime() - timezoneOffset);
+					        var formattedDateTime = localDate.toISOString().slice(0, 16); 
+					        document.querySelector('input[type="datetime-local"]').value = formattedDateTime;
+					    });
+					</script>
+
+
+					<script th:inline="javascript">
+
+						async function initMap12() {
+							var personId = '[[${session.loggedInUser.id}]]';
+							const apiURL = 'https://fundacion-arnuv.onrender.com/paseos/listar/'+personId.trim();
+							try {
+								const response = await fetch(apiURL);
+								if (!response.ok) {
+									throw new Error('Error en la respuesta de la red');
+								}
+								const textoJSON = await response.json();
+								var map = new google.maps.Map(document.getElementById('map'), {
+									zoom: 14,
+									center: { lat: textoJSON.latitud, lng: textoJSON.longitud } 
+								});
+																
+								const listaUbicacionesDetalle =textoJSON.ubicacionDetalleResponse;	
+								const markers = [];
+								console.log(listaUbicacionesDetalle.length);
+								if (listaUbicacionesDetalle.length===0){
+									alert("!! No tienes paseadores cerca a tu ubicación !!\n Se procede a mostrar tu ubicación");
+									var marker = new google.maps.Marker({
+						                position: { lat: textoJSON.latitud, lng: textoJSON.longitud },
+						                map: map,
+						                title: 'Mi ubicación Ubicación'
+						            });
+								}
+								listaUbicacionesDetalle.forEach(point => {									
+									const marker = new google.maps.Marker({
+										position: { lat: point.latitud, lng: point.longitud },
+										map: map,
+										title: point.idpersona,
+										icon: '/content/img/pet-r.png'
+									});
+									markers.push(marker);
+									marker.addListener("click", () => {
+										markers.forEach(m => {
+											m.setIcon('/content/img/pet-r.png'); 
+										});
+										marker.setIcon('/content/img/pet-a.png');
+										const selectElement = document.getElementById('personaSelect');
+										selectElement.value = point.idpersona;
+										
+										selectElement.dispatchEvent(new Event('change'));
+										infowindow.open(map, marker);
+									});
+								});
+							} catch (error) {
+								console.error('Hubo un problema con la operación de fetch:', error);
+							}
+						}
+						google.maps.event.addDomListener(window, 'load', initMap12);
+				</script>
+				
+				<script>
+				    document.getElementById('personaSelect').addEventListener('change', function() {
+				        if (this.value === '0') {
+				            this.setCustomValidity('Por favor, seleccione una persona paseadora.');
+				        } else {
+				            this.setCustomValidity('');
+				        }
+				    });
+				    document.getElementById('mascotaSelect').addEventListener('change', function() {
+				        if (this.value === '0') {
+				            this.setCustomValidity('Por favor, seleccione una mascota.');
+				        } else {
+				            this.setCustomValidity('');
+				        }
+				    });
+				    document.getElementById('opcionesTarifa').addEventListener('change', function() {
+				        if (this.value === '0') {
+				            this.setCustomValidity('Por favor, seleccione una tarifa.');
+				        } else {
+				            this.setCustomValidity('');
+				        }
+				    });
+				    
+				    opcionesTarifa
+				
+				    document.querySelector('form').addEventListener('submit', function(event) {
+				        const personaSelect = document.getElementById('personaSelect');				        
+				        if (personaSelect.value === '0') {
+				            personaSelect.setCustomValidity('Por favor, seleccione una persona paseadora.');
+				            event.preventDefault();
+				        } else {
+				            personaSelect.setCustomValidity('');
+				        }				       
+				        const mascotaSelect = document.getElementById('mascotaSelect');
+				        if (mascotaSelect.value === '0') {
+				            mascotaSelect.setCustomValidity('Por favor, seleccione una mascota.');
+				            event.preventDefault();
+				        } else {
+				            mascotaSelect.setCustomValidity('');
+				        }
+				        const opcionesTarifa = document.getElementById('opcionesTarifa');
+				        if (opcionesTarifa.value === '0') {
+				        	opcionesTarifa.setCustomValidity('Por favor, seleccione una tarifa.');
+				            event.preventDefault();
+				        } else {
+				        	opcionesTarifa.setCustomValidity('');
+				        }
+				    });
+				</script>
+				</div>
+			</div>
+		</main>
+	</div>
+</body>
+</html>

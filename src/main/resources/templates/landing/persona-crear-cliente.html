@@ -1,0 +1,232 @@
+
+<!DOCTYPE html>
+<html :class="{ 'theme-dark': light }" x-data="data()"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Windmill Dashboard</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" th:href="@{/content/css/tailwind.output.css}" />
+    <link rel="stylesheet" th:href="@{/content/css/styles.css}">
+    <script
+      src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"
+      defer
+    ></script>
+    <script th:src="@{/content/js/init-alpine.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script	th:src="@{${linkMapaGoogle.valorText}}"></script>
+    
+<style>
+#map {
+	height: 150px;
+	width: 100%;
+}
+</style>
+<script th:src="@{/content/js/validaciones.js}"defer></script>
+  </head>
+  <body>
+    <div class="flex items-center min-h-screen p-6 bg-gray-50 dark:bg-gray-900 comic-font">
+      <div
+        class="flex-1 h-full max-w-4xl mx-auto overflow-hidden bg-white rounded-lg shadow-xl dark:bg-gray-800"
+      >
+      <div class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
+                    <div id="map" class="w-full h-96 bg-gray-200 rounded-lg"></div>
+        <div class="flex flex-col overflow-y-auto md:flex-row">
+        
+          <div class="h-32 md:h-auto md:w-1/2">
+            <img
+              aria-hidden="true"
+              class="object-cover w-full h-full dark:hidden"
+              th:src="@{/content/img/pasear-perro.png}"
+              alt="Office"
+            />
+            <img
+              aria-hidden="true"
+              class="hidden object-cover w-full h-full dark:block"
+              th:src="@{/content/img/pasear-perro.png}"
+              alt="Office"
+            />
+          </div>
+          <div class="flex items-center justify-center p-6 sm:p-12 md:w-1/2">
+            <div class="w-full">
+              <h1
+                class="mb-4 text-xl font-semibold text-gray-700 dark:text-gray-200">
+                CREA TU USUARIO
+              </h1>
+
+			
+
+              <form th:action="@{/auth/create-access}" th:object="${nuevo}" class="form-material" method="post" enctype="multipart/form-data">
+                    <div class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
+                        <label class="block text-sm">
+                            <span class="text-gray-700 dark:text-gray-400">Nombres</span>
+                            <input th:field="*{nombres}" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                   placeholder="Nombre"
+                                   oninput="validaNombreApellido(this)"
+                                   required/>
+                        </label>
+
+                        <label class="block text-sm">
+                            <span class="text-gray-700 dark:text-gray-400">Apellidos</span>
+                            <input th:field="*{apellidos}" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                   placeholder="Apellido"
+                                   oninput="validaNombreApellido(this)"
+                                   required/>
+                        </label>
+
+                        <label class="block text-sm">
+                            <span class="text-gray-700 dark:text-gray-400">Identificación</span>
+                            <input th:field="*{identificacion}" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                   placeholder="Identificacion"
+                                   oninput="validaIdentificacion(this)"
+                                   required/>
+                        </label>
+                        <div id="mensaje-error" style="color: red;"></div>
+                        <label class="block text-sm">
+                            <span class="text-gray-700 dark:text-gray-400">Celular</span>
+                            <input th:field="*{celular}" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                   placeholder="Celular"
+                                   oninput="validaNumeroCelular(this)"
+                                   required/>
+                            <!--<div id="mensaje-error" style="color: red;"></div>-->
+                        </label>
+
+                        <label class="block text-sm">
+                            <span class="text-gray-700 dark:text-gray-400">Correo Electronico</span>
+                            <input th:field="*{email}" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                   placeholder="Correo"                                  
+                                   required
+                            />
+                        </label>
+                         <label class="block text-sm">
+                            <span class="text-gray-700 dark:text-gray-400">latitud</span>
+                            <input th:field="*{latitud}" readonly class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                   placeholder=""/>
+                        </label>
+                         <label class="block text-sm">
+                            <span class="text-gray-700 dark:text-gray-400">latitud</span>
+                            <input th:field="*{longitud}" readonly class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                   placeholder=""/>
+                        </label>
+                        <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
+                        <div class="block text-sm">
+                            <button type="submit" class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">
+                                Crear persona
+                            </button>
+                        </div>
+                    </div>
+                    <div th:if="${error != null}">
+                        <p  id="error-text" th:text="${error}"style="color: red;"></p>
+                    </div>
+                </form>
+                
+                 <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                       //const errorElement = document.querySelector('div[th\\:if="${error != null}"]');
+                       const errorElement = document.querySelector('p[id="error-text"]');
+                       if (errorElement) {
+                           Swal.fire({
+                               icon: 'error',
+                               title: 'Error',
+                               text: errorElement.textContent.trim()
+                           });
+                       }
+                   });
+                </script>
+
+
+                <script>
+                let currentMarker = null;
+                // Initialize the map
+                window.onload = initMap;
+                </script>
+
+             
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+
+  </body>
+</html>
+
+<!-- 
+<!DOCTYPE html>
+<html x-data="data()" xmlns:th="https://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{content-page/plantilla}">
+<head>
+<script	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDOTcLb_EU2ud-xK2_Rormqf4lm5xH_S5w"></script>
+    
+<style>
+#map {
+	height: 400px;
+	width: 100%;
+}
+</style>
+<script th:src="@{/content/js/validaciones.js}"defer></script>
+
+</head>
+<body>
+<div layout:fragment="espaciocontenidohtml">
+    <main class="h-full overflow-y-auto ">
+        <div class="container px-6 mx-auto grid comic-font">
+
+            <h2
+                    class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
+                CREAR TU USUARIO</h2>
+                
+            <div
+                    class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
+                    <div id="map"></div>
+                    
+                    <label class="block text-sm">
+                            <span class="text-gray-700 dark:text-gray-400">Sector</span>
+                            <input id="Sector" readonly class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                   placeholder="Sector"/>
+                        </label>
+
+                
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                       //const errorElement = document.querySelector('div[th\\:if="${error != null}"]');
+                       const errorElement = document.querySelector('p[id="error-text"]');
+                       if (errorElement) {
+                           Swal.fire({
+                               icon: 'error',
+                               title: 'Error',
+                               text: errorElement.textContent.trim()
+                           });
+                       }
+                   });
+                </script>
+
+
+                <script>
+                let currentMarker = null;
+                // Initialize the map
+                window.onload = initMap;
+                </script>
+                
+              
+
+            </div>
+
+
+
+
+        </div>
+    </main>
+</div>
+
+</body>
+</html>
+ -->

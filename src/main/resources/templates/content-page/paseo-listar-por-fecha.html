@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html x-data="data()" xmlns:th="https://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{content-page/plantilla}">
+<head>
+
+</head>
+<body>
+
+	<div layout:fragment="espaciocontenidohtml">
+		<main class="h-full pb-16 overflow-y-auto">
+			<div class="container px-6 mx-auto grid comic-font">
+				<h2	class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">Paseos</h2>
+
+
+					<form th:action="@{/paseo/ListarbuscarPorFecha}" method="get">
+						
+						<div class="readonly-select grid grid-cols-1 md:grid-cols-2 gap-4 p-2 w-full"> 
+							    <div class="block mt-1 text-sm">
+							    	<input type="date" name="fechaInicio" required class="w-full px-4 py-2 text-sm border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150">
+							    	<h2 	class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
+							        <div>
+										<button type="submit"
+											class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">
+											Buscar</button>
+									</div>
+							    </div>
+							    <div class="block text-sm">
+							    
+							    	<input type="date" name="fechaFin" required class="w-full px-4 py-2 text-sm border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150">
+							    	
+							       
+							    </div>
+							</div>
+					
+					
+					    
+					    
+					    
+					</form>
+
+				<table id="dataTable" class="w-full whitespace-no-wrap">
+					<thead>
+						<tr
+							class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
+							<th scope="col" class="text-primary">Fecha</th>
+							<th scope="col" class="text-primary">FechaDelPaseo</th>
+							<th scope="col" class="text-primary">PersonaPaseadora</th>
+							<th scope="col" class="text-primary">Mascota</th>
+							<th scope="col" class="text-primary">Tarifa</th>
+							<th scope="col" class="text-primary">Estado</th>
+							<th scope="col" class="text-primary">Observacion</th>
+							<th scope="col" class="text-primary">ObservacionCliente</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody
+						class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+						<tr th:each="datos: ${lista}"
+							class="text-gray-700 dark:text-gray-400">
+							<td  class="px-4 py-3" th:text="${#dates.format(datos.fecha, 'yyyy-MM-dd')}"></td>
+							<td  class="px-4 py-3" th:text="${datos.fecharealinicio}"></td>
+							<td  class="px-4 py-3" th:text="${datos.idpersonapasedor.nombres}+' '+${datos.idpersonapasedor.apellidos}"></td>
+							<td  class="px-4 py-3" th:text="${datos.idMascota.nombre}"></td>
+							<td  class="px-4 py-3" th:text="${datos.idtarifario.precio}"></td>
+							<td  class="px-4 py-3" th:text="${datos.estado}"></td>
+							<td  class="px-4 py-3" th:text="${datos.observacionpaseo}"></td>
+							<td  class="px-4 py-3" th:text="${datos.observacionpaseador}"></td>
+						</tr>
+
+					</tbody>
+				</table>
+				<h2	class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
+				<p id="totalTarifa" class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">Total Tarifa: 0.00</p>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Selecciona todas las celdas en la columna de 'Tarifa'
+    const tarifaCells = document.querySelectorAll('#dataTable tbody tr td:nth-child(5)'); // Ajusta el índice según la posición de la columna 'Tarifa'
+    
+    let total = 0;
+
+    tarifaCells.forEach(cell => {
+        const text = cell.textContent.trim();
+        const value = parseFloat(text.replace(/[^0-9.-]/g, '')); // Limpia el texto para obtener solo el valor numérico
+        if (!isNaN(value)) {
+            total += value;
+        }
+    });
+
+    // Muestra el resultado en la consola o en algún elemento de tu HTML
+    console.log(`Total Tarifa: ${total.toFixed(2)}`); // Muestra el total en la consola
+
+    // Para mostrar el resultado en la página, por ejemplo:
+    const resultElement = document.getElementById('totalTarifa');
+    if (resultElement) {
+        resultElement.textContent = `Total Tarifa: ${total.toFixed(2)}`;
+    }
+});
+</script>
+
+
+			</div>
+		</main>
+	</div>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html x-data="data()" xmlns:th="https://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{content-page/plantilla}">
+<head>
+
+<script
+	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDOTcLb_EU2ud-xK2_Rormqf4lm5xH_S5w"></script>
+<style>
+#map {
+	height: 400px;
+	width: 100%;
+}
+</style>
+</head>
+<body>
+	<div layout:fragment="espaciocontenidohtml">
+	
+		<main class="h-full overflow-y-auto ">
+			<div class="container px-6 mx-auto grid comic-font">
+
+				<h2
+					class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
+					Mascotas</h2>
+
+				
+				<div
+					class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
+					<div id="map"></div>
+
+					<form th:action="@{/mascota/insertar}" th:object="${nuevo}"
+						class="form-material" method="post" enctype="multipart/form-data">
+						<div
+							class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
+
+							<label class="block mt-4 text-sm"> <span
+								class="text-gray-700 dark:text-gray-400">Dueño</span> <select
+								th:field="*{idpersona.id}" required
+								class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-multiselect focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray">
+									<option value="0" disabled selected>Seleccione una
+										persona</option>
+									<option th:each="personas : ${personas}"
+										th:text="${personas.nombres}+' - '+${personas.apellidos}"
+										th:value="${personas.id}"></option>
+							</select>
+							</label>
+
+							<div class="mb-3">
+								<label for="formFile" class="form-label">Agrega una foto
+									de tu mascota</label> <br> <input class="form-control" type="file"
+									id="formFile" name="file">
+							</div>
+							<h2
+								class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
+							<label class="block text-sm"> <span
+								class="text-gray-700 dark:text-gray-400">Nombre</span> <input
+								class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+								placeholder="Nombre" th:field="*{nombre}" required />
+
+							</label> <label class="block text-sm"> <span
+								class="text-gray-700 dark:text-gray-400">Edad</span> <input
+								class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+								placeholder="Edad" th:field="*{edad}" required />
+
+							</label> <label class="block mt-4 text-sm"> <span
+								class="text-gray-700 dark:text-gray-400">Raza</span> <select
+								th:field="*{fkcatalogodetalle.id}" required
+								class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-multiselect focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray">
+									<option value="0" disabled selected>Seleccione una
+										raza</option>
+									<option th:each="catalogo : ${catalogo}"
+										th:text="${catalogo.nombre}" th:value="${catalogo.id}"></option>
+							</select>
+							</label>
+							<h2
+								class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
+							<div>
+								<button type="submit"
+									class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+									Guardar</button>
+							</div>
+						</div>
+						<input type="hidden" th:field="*{idmascota}">
+					</form>
+					
+					
+					<script>
+						function initMap() {
+							var map = new google.maps.Map(document
+									.getElementById('map'), {
+								zoom : 15
+							});
+
+							// Intentar geolocalizar al usuario
+							if (navigator.geolocation) {
+								navigator.geolocation
+										.getCurrentPosition(
+												function(position) {
+													var pos = {
+														lat : position.coords.latitude,
+														lng : position.coords.longitude
+													};
+
+													// Centrar el mapa en la ubicación del usuario
+													map.setCenter(pos);
+
+													// Colocar un marcador en la ubicación del usuario
+													var marker = new google.maps.Marker(
+															{
+																position : pos,
+																map : map,
+																title : 'Tu ubicación'
+															});
+
+													// Llenar los campos de latitud y longitud
+													document
+															.getElementById('latitude').value = pos.lat;
+													document
+															.getElementById('longitude').value = pos.lng;
+												}, function() {
+													handleLocationError(true,
+															map.getCenter());
+												});
+							} else {
+								// El navegador no soporta geolocalización
+								handleLocationError(false, map.getCenter());
+							}
+
+							// Añadir marcadores para cada ubicación desde el servidor
+							var locations = /*[[${locations}]]*/[];
+							locations.forEach(function(location) {
+								var marker = new google.maps.Marker({
+									position : {
+										lat : location.latitude,
+										lng : location.longitude
+									},
+									map : map,
+									title : location.description
+								});
+							});
+
+							// Capturar el clic en el mapa
+							map
+									.addListener(
+											'click',
+											function(event) {
+												document
+														.getElementById('latitude').value = event.latLng
+														.lat();
+												document
+														.getElementById('longitude').value = event.latLng
+														.lng();
+
+												// Mover el marcador a la nueva ubicación
+												marker
+														.setPosition(event.latLng);
+												map.setCenter(event.latLng);
+											});
+						}
+
+						function handleLocationError(browserHasGeolocation, pos) {
+							var infoWindow = new google.maps.InfoWindow({
+								map : map
+							});
+							infoWindow.setPosition(pos);
+							infoWindow
+									.setContent(browserHasGeolocation ? 'Error: El servicio de geolocalización falló.'
+											: 'Error: Tu navegador no soporta geolocalización.');
+						}
+
+						function showPoint() {
+							var lat = parseFloat(document
+									.getElementById('latitude').value);
+							var lng = parseFloat(document
+									.getElementById('longitude').value);
+							var pos = {
+								lat : lat,
+								lng : lng
+							};
+
+							// Mover el marcador a la ubicación ingresada
+							if (marker) {
+								marker.setPosition(pos);
+							} else {
+								marker = new google.maps.Marker({
+									position : pos,
+									map : map
+								});
+							}
+							map.setCenter(pos);
+						}
+						</script>
+						<script async defer
+							src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDOTcLb_EU2ud-xK2_Rormqf4lm5xH_S5w&callback=initMap">
+							
+						</script>
+
+				</div>
+
+
+
+
+			</div>
+		</main>
+	</div>
+
+</body>
+</html>

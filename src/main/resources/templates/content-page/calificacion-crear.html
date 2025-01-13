@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html x-data="data()" xmlns:th="https://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{content-page/plantilla}">
+<head>
+
+<style>
+.readonly-select {
+	pointer-events: none; /* Evitar interacciones del usuario */
+	background-color: #e9ecef;
+	/* Color de fondo para parecer deshabilitado */
+	color: #6c757d; /* Color de texto para parecer deshabilitado */
+}
+
+.disabled-link {
+	pointer-events: none; /* Desactiva los clics */
+	color: gray;
+	/* Cambia el color del texto para que parezca deshabilitado */
+	cursor: not-allowed; /* Cambia el cursor al pasar sobre el enlace */
+	text-decoration: none; /* Remueve el subrayado del enlace */
+}
+
+.star-rating select {
+	color: gold; /* Cambia el color del texto a dorado */
+}
+
+.star-rating option {
+	color: black;
+	/* Color de texto por defecto para las opciones no seleccionadas */
+}
+
+.star-rating option:checked {
+	color: gold;
+	/* Cambia el color del texto a dorado cuando la opción está seleccionada */
+}
+</style>
+</head>
+<body>
+
+	<div layout:fragment="espaciocontenidohtml">
+		<main class="h-full overflow-y-auto">
+			<div class="container px-6 mx-auto grid">
+				<h2
+					class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200 comic-font">
+					Califica el paseo</h2>
+				<div
+					class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
+
+					<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+						aria-labelledby="myModalLabel" aria-hidden="true">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="myModalLabel">Califica el
+										paseo</h5>
+
+								</div>
+								<div th:if="${successMessage}" class="alert alert-success">
+        <p th:text="${successMessage}"></p>
+    </div>
+								
+								<div class="modal-body">
+									<form th:action="@{/calificacion/insertar}"
+										th:object="${nuevo}" class="form-material" method="post">
+										<div
+											class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
+
+
+											<label class="block mt-1 text-sm"> <span
+												class="text-gray-700 dark:text-gray-400">Estado </span>
+												<div class="star-rating">
+													<select id="estrellasSelect" th:field="*{calificacion}"
+														required
+														class=" star-rating block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-multiselect focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray">
+
+														<option value="1" data-stars="1">&#9733;</option>
+														<option value="2" data-stars="2">&#9733;&#9733;</option>
+														<option value="3" data-stars="3">&#9733;&#9733;&#9733;
+														</option>
+														<option value="4" data-stars="4">&#9733;&#9733;&#9733;&#9733;
+														</option>
+														<option value="5" data-stars="5">&#9733;&#9733;&#9733;&#9733;&#9733;</option>
+
+													</select>
+												</div>
+											</label>
+										</div>
+										<input type="hidden" th:field="*{paseoID}">
+
+										<div>
+											<button type="submit"
+												class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">
+												Guardar</button>
+										</div>
+
+
+										<div th:if="${error != null}">											
+											<input id="idpaseo" th:value="${error}"
+												class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+												type="hidden" />
+										</div>
+
+
+
+									</form>
+								</div>
+								<a id="volverpaseos" th:href="@{/paseo/listar}" style="display: none;"></a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<script>
+				window.onload = function() {
+					const selectElement = document
+							.getElementById('estrellasSelect');
+					const idpaseo = document.getElementById('idpaseo');
+					const buscarPorFechaLink = document.getElementById('volverpaseos').href;
+
+					if (idpaseo.value !== "") {
+						alert(idpaseo.value);
+						window.location.href = buscarPorFechaLink;
+
+					}
+					function updateStarRating() {
+						const selectedValue = selectElement.value;
+						const options = selectElement.options;
+
+						// Recorre todas las opciones y actualiza el color
+						for (let i = 0; i < options.length; i++) {
+							options[i].classList.remove('selected');
+							if (options[i].value === selectedValue) {
+								options[i].classList.add('selected');
+							}
+						}
+					}
+
+					// Inicializa el color de las estrellas al cargar
+					updateStarRating();
+
+					// Actualiza el color de las estrellas cuando cambia la selección
+					selectElement.addEventListener('change', updateStarRating);
+				};
+			</script>
+	</main>
+	</div>
+</body>
+</html>

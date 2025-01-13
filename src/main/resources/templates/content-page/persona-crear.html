@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html x-data="data()" xmlns:th="https://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{content-page/plantilla}">
+<head>
+<script	th:src="@{${linkMapaGoogle.valorText}}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+#map {
+	height: 400px;
+	width: 100%;
+}
+</style>
+    <script th:src="@{/content/js/validaciones.js}"defer></script>
+
+</head>
+<body>
+<div layout:fragment="espaciocontenidohtml">
+    <main class="h-full overflow-y-auto ">
+        <div class="container px-6 mx-auto grid comic-font">
+
+            <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
+                NUEVA PERSONA</h2>
+            <div
+                    class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
+                    <div id="map"></div>
+                    
+                    <label class="block text-sm">
+                            <span class="text-gray-700 dark:text-gray-400">Sector</span>
+                            <input id="Sector" readonly class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                   placeholder="Sector"/>
+                        </label>
+
+                <form th:action="@{/persona/create-access}" th:object="${nuevo}" class="form-material" method="post" enctype="multipart/form-data">
+                    <div class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
+                        <label class="block text-sm">
+                            <span class="text-gray-700 dark:text-gray-400">Nombres</span>
+                            <input th:field="*{nombres}" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                   placeholder="Nombre"
+                                   oninput="validaNombreApellido(this)"
+                                   required
+                            />
+                        </label>
+
+                        <label class="block text-sm">
+                            <span class="text-gray-700 dark:text-gray-400">Apellidos</span>
+                            <input th:field="*{apellidos}" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                   placeholder="Apellido"
+                                   oninput="validaNombreApellido(this)"
+                                   required
+                            />
+                        </label>
+
+                        <label class="block text-sm">
+                            <span class="text-gray-700 dark:text-gray-400">Identificación</span>
+                            <input th:field="*{identificacion}" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                   placeholder="Identificacion"
+                                   oninput="validaIdentificacion(this)"
+                                   required
+                            />
+                        </label>
+                        <div id="mensaje-error" style="color: red;"></div>
+                        <label class="block text-sm">
+                            <span class="text-gray-700 dark:text-gray-400">Celular</span>
+                            <input th:field="*{celular}" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                   placeholder="Celular"
+                                   oninput="validaNumeroCelular(this)"
+                                   required
+                            />
+                            <!--<div id="mensaje-error" style="color: red;"></div>-->
+
+                        </label>
+
+                        <label class="block text-sm">
+                            <span class="text-gray-700 dark:text-gray-400">Correo Electronico</span>
+                            <input th:field="*{email}" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                   placeholder="Correo"
+                                   required
+                            />
+                        </label>
+                         <label class="block text-sm">
+                            <span class="text-gray-700 dark:text-gray-400">latitud</span>
+                            <input th:field="*{latitud}" readonly class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                   placeholder=""/>
+                        </label>
+                         <label class="block text-sm">
+                            <span class="text-gray-700 dark:text-gray-400">latitud</span>
+                            <input th:field="*{longitud}" readonly class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                   placeholder=""/>
+                        </label>
+                        <h2
+								class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
+                        <div>
+                            <button type="submit" class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">
+                                Crear persona
+                            </button>
+                        </div>
+                    </div>
+                    <div th:if="${error != null}">
+                        <p  id="error-text" th:text="${error}"style="color: red;"></p>
+                    </div>
+                </form>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                       //const errorElement = document.querySelector('div[th\\:if="${error != null}"]');
+                       const errorElement = document.querySelector('p[id="error-text"]');
+                       if (errorElement) {
+                           Swal.fire({
+                               icon: 'error',
+                               title: 'Error',
+                               text: errorElement.textContent.trim()
+                           });
+                       }
+                   });
+                </script>
+                <script>
+                let currentMarker = null;
+                // Initialize the map
+                window.onload = initMap;
+                </script>
+            </div>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html x-data="data()" xmlns:th="https://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{content-page/plantilla}">
+<head>
+<script
+	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDOTcLb_EU2ud-xK2_Rormqf4lm5xH_S5w"></script>
+<style>
+#map {
+	height: 400px;
+	width: 100%;
+}
+</style>
+
+</head>
+<body>
+<div layout:fragment="espaciocontenidohtml">
+    <main class="h-full overflow-y-auto ">
+        <div class="container px-6 mx-auto grid comic-font">
+
+            <h2
+                    class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
+                NUEVA PERSONA</h2>
+                
+            <div
+                    class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
+                    <div id="map"></div>
+                    
+                    <label class="block text-sm">
+                            <span class="text-gray-700 dark:text-gray-400">Sector</span>
+                            <input id="Sector" readonly class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                   placeholder=""/>
+                        </label>
+
+                <form th:action="@{/persona/create-access}" th:object="${nuevo}" class="form-material" method="post" enctype="multipart/form-data">
+                    <div class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
+                        <label class="block text-sm">
+                            <span class="text-gray-700 dark:text-gray-400">Nombres</span>
+                            <input th:field="*{nombres}" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                   placeholder=""/>
+                        </label>
+
+                        <label class="block text-sm">
+                            <span class="text-gray-700 dark:text-gray-400">Apellidos</span>
+                            <input th:field="*{apellidos}" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                   placeholder=""/>
+                        </label>
+
+                        <label class="block text-sm">
+                            <span class="text-gray-700 dark:text-gray-400">Identificación</span>
+                            <input th:field="*{identificacion}" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                   placeholder=""/>
+                        </label>
+
+                        <label class="block text-sm">
+                            <span class="text-gray-700 dark:text-gray-400">Celular</span>
+                            <input th:field="*{celular}" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                   placeholder=""/>
+                        </label>
+
+                        <label class="block text-sm">
+                            <span class="text-gray-700 dark:text-gray-400">Correo Electronico</span>
+                            <input th:field="*{email}" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                   placeholder=""/>
+                        </label>
+                         <label class="block text-sm">
+                            <span class="text-gray-700 dark:text-gray-400">latitud</span>
+                            <input th:field="*{latitud}" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                   placeholder=""/>
+                        </label>
+                         <label class="block text-sm">
+                            <span class="text-gray-700 dark:text-gray-400">latitud</span>
+                            <input th:field="*{longitud}" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                   placeholder=""/>
+                        </label>
+                        <div>
+                            <button type="submit" class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+                                Crear persona
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <script>
+                let currentMarker = null;
+
+                
+
+                // Initialize the map
+                window.onload = initMap;
+                </script>
+                
+              
+
+            </div>
+
+
+
+
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

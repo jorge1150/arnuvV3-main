@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html x-data="data()" xmlns:th="https://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{content-page/plantilla}">
+<head>
+	<script th:src="@{/content/js/validaciones.js}"defer></script>
+
+</head>
+<body>
+
+	<div layout:fragment="espaciocontenidohtml">
+		<main class="h-full overflow-y-auto">
+			<div class="container px-6 mx-auto grid">
+				<h2
+					class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200 comic-font">
+					Catalogos de razas de mascotas</h2>
+				<div
+					class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
+
+					<form th:action="@{/catalogo/insertar}" th:object="${nuevo}"
+						class="form-material" method="post">
+
+						<div
+							class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
+
+							<!-- <label class="block text-sm"> <span
+								class="text-gray-700 dark:text-gray-400">ID</span> <input
+								class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+								placeholder="ID" th:field="*{idcatalogo}" required />
+							</label>-->
+							<h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
+							<label class="block text-sm"> <span
+								class="text-gray-700 dark:text-gray-400 comic-font">Nombre</span> <input
+								class="comic-font block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+								placeholder="Nombre" th:field="*{nombre}"
+								oninput="validarNombre(this)"
+								required />
+							
+							</label>
+							<h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2> 
+							<!-- 
+							<label class="block text-sm"> <span
+								class="text-gray-700 dark:text-gray-400">Edad</span> <input
+								class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+								placeholder="edad" th:field="*{edad}" required />
+							</label>
+							
+							 -->
+							<h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
+							
+							<div>
+								<button type="submit"
+									class="px-4 py-2 text-sm font-medium leading-5 transition-colors duration-150 border border-transparent rounded-lg bg-cream focus:outline-none focus:shadow-outline-purple">
+									Guardar</button>
+							</div>
+
+						</div>
+						
+						<input type="hidden" th:field="*{id}">
+					
+
+					</form>
+
+				</div>
+
+
+
+
+			</div>
+		</main>
+	</div>
+</body>
+</html>

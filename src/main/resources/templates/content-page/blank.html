@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html x-data="data()" xmlns:th="https://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{content-page/plantilla}">
+<head>
+    <script th:src="@{/content/js/validaciones.js}" defer></script>
+    <style type="text/css">
+        .banner-content {
+            display: flex;
+            align-items: center; /* Alinea verticalmente al centro */
+        }
+
+        .img-wrapper {
+            flex: 0 0 40%; /* Toma el 40% del ancho del contenedor */
+            text-align: center; /* Centra la imagen en su columna */
+        }
+
+        .content-wrapper {
+            flex: 0 0 60%; /* Toma el 60% del ancho del contenedor */
+        }
+
+        .banner-title {
+            font-size: 4rem; /* Ajusta el tamaño del texto */
+            font-weight: bold; /* Hace que el texto sea más grueso */
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="espaciocontenidohtml">
+        <main class="h-full overflow-y-auto">
+            <div class="swiper main-swiper">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide py-5">
+                        <div class="container mx-auto px-4">
+						    <div class="flex flex-col md:flex-row items-center">
+						        <div class="img-wrapper md:w-5/12 mb-4 md:mb-0">
+						            <img th:src="@{/landing/images/banner-img.png}" class="w-full h-auto" alt="Banner Image">
+						        </div>
+						        <div class="content-wrapper md:w-7/12 flex items-center justify-center text-center md:text-center">
+						            <h2 class="text-3xl md:text-6xl font-semibold text-gray-700 dark:text-gray-200">
+						                AYÚDANOS A ALIVIAR SU ESTRÉS
+						            </h2>
+							        </div>
+							    </div>
+							</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

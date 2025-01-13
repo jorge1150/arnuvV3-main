@@ -1,0 +1,83 @@
+
+<!DOCTYPE html>
+<html x-data="data()" xmlns:th="https://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{content-page/plantilla}">
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+<div layout:fragment="espaciocontenidohtml">
+  <main class="h-full overflow-y-auto ">
+    <div class="container px-6 mx-auto grid comic-font">
+
+      <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
+        Parametros generales</h2>
+      <div
+              class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
+              <div class="flex justify-center">
+                <img th:src="@{/content/img/gato.png}"
+                    
+                    />
+            </div>
+        <form method="POST" enctype="multipart/form-data"  th:action="@{/parametro/subirArchivoPlantillaMaill}" >          
+          <div class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
+          </div>
+        </form>
+        <form  enctype="multipart/form-data" >
+        	<h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
+          <div class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">      
+          		<div>
+					<a th:href="@{/parametro/crearParametrosRadio}"
+					   class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">
+					   
+					   <i class="fas fa-map-marker-alt mr-2"> Radio para Ubicaciones</i>
+					</a>
+				</div>
+				<h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
+				<div>
+					<a th:href="@{/parametro/crearParametrosKeyGoogle}"
+					   class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">
+					   
+					   <i class="fas fa-map-marker-alt mr-2"> Key API de GOOGLE</i>
+					</a>
+				</div>              
+              	<h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
+				  <div>
+					  <a th:href="@{/parametro/crearParametrosExpiraToken}"
+						 class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">
+
+						  <i class="fas fa-map-marker-alt mr-2">Vigencia link</i>
+					  </a>
+				  </div>
+				  <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
+	          	<div>
+					<a th:href="@{/parametro/nuevaImagen}"
+					   class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">
+					   
+					   <i class="fas fa-image mr-2">  Subir Imagenes</i>
+					</a>
+				</div>
+				<h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
+				<div>
+					<a th:href="@{/parametro/crearParametrosPlantillaMaill}"
+					   class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">
+					   
+					   <i class="fas fa-envelope mr-2">  Subir Plantilla para envio de Mail</i>
+					</a>
+				</div>
+          		<h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
+          </div>
+        </form>
+			<div class="flex justify-center">
+                <img th:src="@{/content/img/mascotas.png}" />
+            </div>
+      </div>
+      
+    </div>
+  </main>
+</div>
+
+</body>
+</html>
+

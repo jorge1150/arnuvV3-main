@@ -1,0 +1,38 @@
+
+<!DOCTYPE html>
+<html x-data="data()" xmlns:th="https://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{content-page/plantilla}">
+<head>
+
+</head>
+<body>
+<div layout:fragment="espaciocontenidohtml">
+  <main class="h-full overflow-y-auto ">
+    <div class="container px-6 mx-auto grid comic-font">
+
+      <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
+        Subir plantilla para notificaciones por correo</h2>
+      <div
+              class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
+
+        <form method="POST" enctype="multipart/form-data"  th:action="@{/parametro/subirArchivoPlantillaMaill}" >          
+          <div class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">          		
+          		<input type="file" name="archivo" required class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input" />
+          		<h2	class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
+				<button type="submit" class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-black-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">
+					    Subir Archivo</button>
+          
+           
+          </div>
+        </form>
+	<p th:if="${error}" th:text="${error}" class="text-danger mt-3 text-center"></p>
+      </div>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </div>
+  </main>
+</div>
+
+</body>
+</html>
+
