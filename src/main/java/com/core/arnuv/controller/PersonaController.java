@@ -1,24 +1,20 @@
 package com.core.arnuv.controller;
 
 import com.core.arnuv.model.Parametros;
-import com.core.arnuv.model.Paseo;
 import com.core.arnuv.model.Personadetalle;
 import com.core.arnuv.model.Ubicacion;
 import com.core.arnuv.model.Usuariodetalle;
 import com.core.arnuv.model.Usuariorol;
 import com.core.arnuv.request.PersonaDetalleRequest;
-import com.core.arnuv.request.UsuarioDetalleRequest;
 import com.core.arnuv.service.IParametroService;
 import com.core.arnuv.service.IPersonaDetalleService;
 import com.core.arnuv.service.IUbicacionService;
 import com.core.arnuv.service.IUsuarioDetalleService;
 import com.core.arnuv.service.IUsuarioRolService;
 import com.core.arnuv.services.imp.EmailSender;
-import com.core.arnuv.utils.ArnuvNotFoundException;
 
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
@@ -31,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -41,7 +36,6 @@ import static com.core.arnuv.constants.Constants.*;
 @Controller
 @RequestMapping("/persona")
 @RequiredArgsConstructor
-@Slf4j
 public class PersonaController {
 	private final IPersonaDetalleService servicioPersonaDetalle;
 	private final IUbicacionService  ubicacionService;

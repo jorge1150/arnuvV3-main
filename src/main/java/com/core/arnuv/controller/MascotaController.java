@@ -7,15 +7,12 @@ import com.core.arnuv.request.PersonaDetalleRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import com.core.arnuv.model.MascotaDetalle;
-import com.core.arnuv.model.Paseo;
 import com.core.arnuv.service.ICatalogoDetalleService;
 import com.core.arnuv.service.IMascotaDetalleService;
 import com.core.arnuv.service.IPersonaDetalleService;
@@ -26,7 +23,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/mascota")
-@Slf4j
 @RequiredArgsConstructor
 public class MascotaController {
 	public final IMascotaDetalleService mscotaDetalleService;

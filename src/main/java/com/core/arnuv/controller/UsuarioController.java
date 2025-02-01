@@ -6,7 +6,6 @@ import com.core.arnuv.service.IPersonaDetalleService;
 import com.core.arnuv.service.IUsuarioDetalleService;
 import com.core.arnuv.utils.ArnuvNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;

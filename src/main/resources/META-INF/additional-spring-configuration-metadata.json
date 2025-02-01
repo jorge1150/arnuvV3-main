@@ -1,0 +1,22 @@
+{"properties": [
+  {
+    "name": "token.signing.key",
+    "type": "java.lang.String",
+    "description": "A description for 'token.signing.key'"
+  },
+  {
+    "name": "firebase.storage.projectId",
+    "type": "java.lang.String",
+    "description": "A description for 'firebase.storage.projectId'"
+  },
+  {
+    "name": "firebase.storage.bucketName",
+    "type": "java.lang.String",
+    "description": "A description for 'firebase.storage.bucketName'"
+  },
+  {
+    "name": "firebase.storage.url",
+    "type": "java.lang.String",
+    "description": "A description for 'firebase.storage.url'"
+  }
+]}
