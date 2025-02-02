@@ -5,7 +5,6 @@ import com.core.arnuv.model.*;
 import com.core.arnuv.repository.IPersonaDetalleRepository;
 import com.core.arnuv.request.PersonaDetalleRequest;
 import com.core.arnuv.request.UsuarioDetalleRequest;
-import com.core.arnuv.response.PersonaDetalleResponse;
 import com.core.arnuv.service.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.util.Strings;

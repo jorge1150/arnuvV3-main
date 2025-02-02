@@ -6,7 +6,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login - Windmill Dashboard</title>
+    <title>Crear Persona</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
@@ -96,14 +96,18 @@
                                    required/>
                             <!--<div id="mensaje-error" style="color: red;"></div>-->
                         </label>
+                        <div id="mensaje-error-celular" style="color: red;"></div>
 
                         <label class="block text-sm">
                             <span class="text-gray-700 dark:text-gray-400">Correo Electronico</span>
                             <input th:field="*{email}" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                                   placeholder="Correo"                                  
+                                   placeholder="Correo"
+                                   oninput="validarEmail(this)"                                  
                                    required
                             />
                         </label>
+                        <div id="mensaje-error-email" style="color: red;"></div>
+
                          <label class="block text-sm">
                             <span class="text-gray-700 dark:text-gray-400">latitud</span>
                             <input th:field="*{latitud}" readonly class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
@@ -139,7 +143,33 @@
                        }
                    });
                 </script>
-
+                
+                <script>
+                  document.addEventListener("DOMContentLoaded", function () {
+                      const form = document.querySelector("form");
+                      form.addEventListener("submit", function (event) {
+                          // Obtener todos los elementos de mensaje de error
+                          const mensajesError = [
+                              document.getElementById("mensaje-error"),
+                              document.getElementById("mensaje-error-celular"),
+                              document.getElementById("mensaje-error-email")
+                          ];
+              
+                          // Verificar si algún mensaje de error está visible y tiene contenido
+                          const hayErrores = mensajesError.some(msg => msg && msg.textContent.trim() !== "");
+              
+                          if (hayErrores) {
+                              event.preventDefault(); // Evita que el formulario se envíe
+                              Swal.fire({
+                                  icon: 'error',
+                                  title: 'Error',
+                                  text: 'Corrige los errores antes de continuar.'
+                              });
+                          }
+                      });
+                  });
+              </script>
+              
 
                 <script>
                 let currentMarker = null;
