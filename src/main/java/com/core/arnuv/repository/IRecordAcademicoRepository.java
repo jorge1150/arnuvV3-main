@@ -11,6 +11,7 @@ import com.core.arnuv.model.RecordAcademico;
 
 @Repository
 public interface IRecordAcademicoRepository  extends JpaRepository<RecordAcademico, Integer>{
-	  @Query("SELECT r FROM RecordAcademico r WHERE r.personadetalle.id = :personaId")
-	    List<RecordAcademico> buscarPorPersonaId(@Param("personaId") int personId);
+	@Query("SELECT r FROM RecordAcademico r WHERE r.persona.id = :personaId")
+	List<RecordAcademico> buscarPorPersonaId(@Param("personaId") Integer personaId);
+
 }

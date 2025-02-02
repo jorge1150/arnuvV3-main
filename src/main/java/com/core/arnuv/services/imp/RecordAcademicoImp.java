@@ -25,7 +25,7 @@ public class RecordAcademicoImp implements IRecordAcademicoService {
 		return recordAcademicoRepository.save(recordAcademico);
 	}
 	@Override
-	public RecordAcademico buscarRecordAcademicoPorId(int id) {
+	public RecordAcademico buscarRecordAcademicoPorId(Integer id) {
 		
 		return recordAcademicoRepository.findById(id).orElse(null);
 	}

@@ -94,12 +94,7 @@ public class Personadetalle implements Serializable {
 	@OneToMany(mappedBy = "persona")
 	private List<RecordAcademico> recordAcademico;
    
-	@ManyToMany
-	@JoinTable(
-	    name = "paseador_tamano_perro", 
-	    joinColumns = @JoinColumn(name = "paseador_id"), 
-	    inverseJoinColumns = @JoinColumn(name = "tamano_perro_id")
-	)
+
 	@Enumerated(EnumType.STRING) 
 	private Set<TamanoPerroEnum> tamanosAceptados = new HashSet<>();
 

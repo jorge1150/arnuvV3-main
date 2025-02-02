@@ -21,7 +21,7 @@ public class RecordAcademico {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -38,7 +38,7 @@ public class RecordAcademico {
     private EstadoAcademico estadoAcademico; 
     
     @ManyToOne
-    @JoinColumn( nullable = false)
+    @JoinColumn(name = "persona_id")
     private Personadetalle persona;
     
     @Column(nullable = false)

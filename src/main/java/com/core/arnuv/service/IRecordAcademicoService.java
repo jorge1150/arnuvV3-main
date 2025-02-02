@@ -10,7 +10,7 @@ public interface IRecordAcademicoService {
 
 	public RecordAcademico guardarRecordAcademico(RecordAcademico recordAcademico);
 
-	public RecordAcademico buscarRecordAcademicoPorId(int id);
+	public RecordAcademico buscarRecordAcademicoPorId(Integer id);
 
 	public void eliminarRecordAcademico(int id);
 }
