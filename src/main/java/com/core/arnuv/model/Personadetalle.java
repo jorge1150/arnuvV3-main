@@ -4,9 +4,13 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.Comment;
 
+import com.core.arnuv.enums.TamanoPerro;
+
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Comment("Tabla que almacena detalle de informacion de una persona")
@@ -64,6 +68,10 @@ public class Personadetalle implements Serializable {
 
     @Column(nullable = true)
     private String experienciaPrevia;
+    
+
+    @Column(nullable = true)
+    private Integer aniosExperiencia;
 
 	@OneToMany(mappedBy = "idpersona")
 	private List<MascotaDetalle> mascotaDetalles;
@@ -85,7 +93,13 @@ public class Personadetalle implements Serializable {
 	
 	@OneToMany(mappedBy = "persona")
 	private List<RecordAcademico> recordAcademico;
-	
+    @ManyToMany
+    @JoinTable(
+        name = "paseador_tamano_perro", 
+        joinColumns = @JoinColumn(name = "paseador_id"), 
+        inverseJoinColumns = @JoinColumn(name = "tamano_perro_id")
+    )
+    private Set<TamanoPerro> tamanosAceptados = new HashSet<>();
 	/*
 	@OneToMany(mappedBy = "idpersonapasedor")
 	private List<Calificacion> calificacionpaseador;
