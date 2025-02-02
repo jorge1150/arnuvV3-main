@@ -48,13 +48,7 @@ public class Personadetalle implements Serializable {
 	@Column(name = "apellidos", length = 120)
 	private String apellidos;
 
-	/*@ManyToOne()
-	@JoinColumns({ @JoinColumn(name = "idcatalogoidentificacion", referencedColumnName = "iddetalle"),
-			@JoinColumn(name = "iddetalleidentificacion", referencedColumnName = "idcatalogo") })
-	@Comment("Codigo de catalogo")
-	@ToString.Exclude
-	private CatalogoDetalle catalogodetalle;
-*/
+
 	@Comment("Identificacion, cedula, ruc, pasaporte")
 	@Column(name = "identificacion", length = 15, unique=true)
 	private String identificacion;
@@ -66,6 +60,10 @@ public class Personadetalle implements Serializable {
 	@Comment("Correo electronico")
 	@Column(name = "email", length = 150, unique=true)
 	private String email;
+	
+
+    @Column(nullable = true)
+    private String experienciaPrevia;
 
 	@OneToMany(mappedBy = "idpersona")
 	private List<MascotaDetalle> mascotaDetalles;
@@ -84,6 +82,9 @@ public class Personadetalle implements Serializable {
 	// ubicacion
 	@OneToMany(mappedBy = "idpersona")
 	private List<Ubicacion> ubicaciones;
+	
+	@OneToMany(mappedBy = "persona")
+	private List<RecordAcademico> recordAcademico;
 	
 	/*
 	@OneToMany(mappedBy = "idpersonapasedor")
