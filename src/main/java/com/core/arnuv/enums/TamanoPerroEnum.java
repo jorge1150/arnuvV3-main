@@ -1,5 +1,5 @@
 package com.core.arnuv.enums;
 
-public enum TamanoPerro {
+public enum TamanoPerroEnum {
 	PEQUENO, MEDIANO, GRANDE
 }
