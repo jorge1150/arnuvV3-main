@@ -66,6 +66,10 @@ public class Personadetalle implements Serializable {
 	@Comment("Correo electronico")
 	@Column(name = "email", length = 150, unique=true)
 	private String email;
+	
+
+    @Column(nullable = true)
+    private String experienciaPrevia;
 
 	@OneToMany(mappedBy = "idpersona")
 	private List<MascotaDetalle> mascotaDetalles;
@@ -84,6 +88,9 @@ public class Personadetalle implements Serializable {
 	// ubicacion
 	@OneToMany(mappedBy = "idpersona")
 	private List<Ubicacion> ubicaciones;
+	
+	@OneToMany(mappedBy = "persona")
+	private List<RecordAcademico> recordAcademico;
 	
 	/*
 	@OneToMany(mappedBy = "idpersonapasedor")
