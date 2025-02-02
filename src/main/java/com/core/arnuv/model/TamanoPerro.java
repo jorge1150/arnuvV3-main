@@ -1,5 +1,7 @@
 package com.core.arnuv.model;
 
+import com.core.arnuv.enums.TamanoPerroEnum;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -17,7 +19,7 @@ public class TamanoPerro {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private TamanoPerro tamano;
+    private TamanoPerroEnum tamano;
 
 
 }

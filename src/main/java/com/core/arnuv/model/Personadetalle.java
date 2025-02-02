@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.Comment;
 
-import com.core.arnuv.enums.TamanoPerro;
+import com.core.arnuv.enums.TamanoPerroEnum;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -101,7 +101,7 @@ public class Personadetalle implements Serializable {
 	    inverseJoinColumns = @JoinColumn(name = "tamano_perro_id")
 	)
 	@Enumerated(EnumType.STRING) 
-	private Set<TamanoPerro> tamanosAceptados = new HashSet<>();
+	private Set<TamanoPerroEnum> tamanosAceptados = new HashSet<>();
 
 	/*
 	@OneToMany(mappedBy = "idpersonapasedor")
