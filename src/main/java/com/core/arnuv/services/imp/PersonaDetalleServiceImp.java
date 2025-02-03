@@ -4,6 +4,7 @@ import com.core.arnuv.enums.RolEnum;
 import com.core.arnuv.model.*;
 import com.core.arnuv.repository.IPersonaDetalleRepository;
 import com.core.arnuv.request.PersonaDetalleRequest;
+import com.core.arnuv.request.RecordAcademicoRequest;
 import com.core.arnuv.request.UsuarioDetalleRequest;
 import com.core.arnuv.service.*;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -26,6 +28,7 @@ public class PersonaDetalleServiceImp implements IPersonaDetalleService {
 	private final IUsuarioDetalleService userService;
 	private final IRolService servicioRol;
 	private final IUsuarioRolService servicioUsuarioRol;
+	private final IRecordAcademicoService academicoService;
 
 	@Override
 	public List<Personadetalle> listarTodosPersonaDetalle() {
@@ -39,7 +42,7 @@ public class PersonaDetalleServiceImp implements IPersonaDetalleService {
 
 	@Override
 	public Personadetalle actualizarPersonaDetalle(Personadetalle data) {
-		Personadetalle existePersonaDetalle= repo.findById(data.getId()).orElse(null);
+		Personadetalle existePersonaDetalle = repo.findById(data.getId()).orElse(null);
 		existePersonaDetalle.setIdusuarioing(data.getIdusuarioing());
 		existePersonaDetalle.setIdusuariomod(data.getIdusuariomod());
 		existePersonaDetalle.setFechaingreso(data.getFechaingreso());
@@ -72,17 +75,18 @@ public class PersonaDetalleServiceImp implements IPersonaDetalleService {
 	public Personadetalle buscarEmail(String email) {
 		return repo.buscarEmail(email);
 	}
+
 	@Override
 	public String verificarDuplicados(String email, String celular, String identificacion) {
 		String error = Strings.EMPTY;
-		if(buscarEmail(email)!=null){
-			error ="El correo electronico ya se encuentra registrado";
+		if (buscarEmail(email) != null) {
+			error = "El correo electronico ya se encuentra registrado";
 		}
-		if(buscarPorIdentificacion(identificacion) != null){
-			error ="La identificación ya se encuentra registrada";
+		if (buscarPorIdentificacion(identificacion) != null) {
+			error = "La identificación ya se encuentra registrada";
 		}
 		if (buscarPorCelular(celular) != null) {
-			error ="El celular ya se encuentra registrado";
+			error = "El celular ya se encuentra registrado";
 		}
 		return error;
 	}
@@ -94,21 +98,51 @@ public class PersonaDetalleServiceImp implements IPersonaDetalleService {
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public Personadetalle guardarInformacionCompleta(PersonaDetalleRequest persona, UsuarioDetalleRequest usuario) throws Exception {
-		var personaEnt = persona.mapearDato(persona, Personadetalle.class, "idcatalogoidentificacion", "iddetalleidentificacion");
+	public Personadetalle guardarInformacionCompleta(PersonaDetalleRequest persona, UsuarioDetalleRequest usuario,
+			List<RecordAcademicoRequest> recordAcademico) throws Exception {
+		var personaEnt = persona.mapearDato(persona, Personadetalle.class, "idcatalogoidentificacion",
+				"iddetalleidentificacion");
+		List<RecordAcademico> listRecord = new ArrayList<>();
 		try {
 			personaEnt.setFechaingreso(new Date());
 			personaEnt = insertarPersonaDetalle(personaEnt);
 			crearUbicacion(persona, personaEnt);
-			crearUsuario(personaEnt, usuario);
-		}catch (Exception e) {
+			if ("P".equals(persona.getTipoPersona())) {
+				for (RecordAcademicoRequest item : persona.getRecordsAcademicosList()) {
+					var recordEnt = item.mapearDato(item, RecordAcademico.class, "");
+					listRecord.add(recordEnt);
+				}
+				crearRecordAcademico(personaEnt, listRecord);
+			}
+			crearUsuario(personaEnt, usuario, persona.getTipoPersona());
+		} catch (Exception e) {
 			throw new Exception(e.getMessage());
 		}
 		return personaEnt;
 	}
 
 	/**
+	 * CREAR RECORDACADEMICO
+	 * 
+	 * @param personaEnt
+	 * @param recordAcademicoEnt
+	 */
+	private void crearRecordAcademico(Personadetalle personaEnt, List<RecordAcademico> recordAcademicoEnt) {
+		for (RecordAcademico recordAcademico : recordAcademicoEnt) {
+			var recordA = new RecordAcademico();
+			recordA.setAnioGraduacion(recordAcademico.getAnioGraduacion());
+			recordA.setEstadoAcademico(recordAcademico.getEstadoAcademico());
+			recordA.setEstaEliminado(recordAcademico.getEstaEliminado());
+			recordA.setInstitution(recordAcademico.getInstitution());
+			recordA.setNivelAcademico(recordAcademico.getNivelAcademico());
+			recordA.setPersona(personaEnt);
+			academicoService.guardarRecordAcademico(recordA);
+		}
+	}
+
+	/**
 	 * CREAR UBICACION
+	 * 
 	 * @param persona
 	 * @param personaEnt
 	 */
@@ -123,26 +157,30 @@ public class PersonaDetalleServiceImp implements IPersonaDetalleService {
 
 	/**
 	 * CREAR USUARIO
+	 * 
 	 * @param persona
 	 * @param usuario
 	 * @throws Exception
 	 */
-	private Usuariodetalle crearUsuario(Personadetalle persona, UsuarioDetalleRequest usuario) throws Exception {
+	private Usuariodetalle crearUsuario(Personadetalle persona, UsuarioDetalleRequest usuario, String tipo)
+			throws Exception {
 		Usuariodetalle usuariodetalle = usuario.mapearDato(usuario, Usuariodetalle.class);
 		usuariodetalle.setPassword(passwordEncoder.encode(usuario.getPassword()));
 		usuariodetalle.setEstado(Boolean.FALSE);
 		usuariodetalle.setIdpersona(persona);
 		usuariodetalle.setFechaingreso(new Date());
-		if(userService.buscarPorEmailOrUserName(usuario.getUsername()) != null) {
+		if (userService.buscarPorEmailOrUserName(usuario.getUsername()) != null) {
 			throw new Exception("El nombre de usuario ya se encuentra registrado.");
 		}
 		Usuariodetalle usuarioEnt = userService.insertarUsuarioDetalle(usuariodetalle);
-		crearRol(usuarioEnt, RolEnum.ROLE_USER);
+		var role = "P".equals(tipo) ? RolEnum.ROLE_WALKER : RolEnum.ROLE_USER;
+		crearRol(usuarioEnt, role);
 		return usuarioEnt;
 	}
 
 	/**
 	 * CREAR ROL DEL USUARIO
+	 * 
 	 * @param usuario
 	 * @param role
 	 */

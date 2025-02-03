@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.core.arnuv.model.Personadetalle;
 import com.core.arnuv.request.PersonaDetalleRequest;
+import com.core.arnuv.request.RecordAcademicoRequest;
 import com.core.arnuv.request.UsuarioDetalleRequest;
 
 public interface IPersonaDetalleService {
@@ -19,12 +20,14 @@ public interface IPersonaDetalleService {
 	public Personadetalle buscarPorIdentificacion(String identificacion);
 
 	public boolean eliminar(Personadetalle data);
-   public  Personadetalle buscarEmail(String email);
+
+	public Personadetalle buscarEmail(String email);
 
 	String verificarDuplicados(String email, String celular, String identificacion);
 
 	Personadetalle buscarPorCelular(String celular);
 
-	Personadetalle guardarInformacionCompleta(PersonaDetalleRequest persona, UsuarioDetalleRequest usuario) throws Exception;
+	Personadetalle guardarInformacionCompleta(PersonaDetalleRequest persona, UsuarioDetalleRequest usuario,
+			List<RecordAcademicoRequest> recordAcademico) throws Exception;
 
 }
