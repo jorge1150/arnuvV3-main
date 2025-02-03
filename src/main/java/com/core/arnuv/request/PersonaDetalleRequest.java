@@ -1,5 +1,6 @@
 package com.core.arnuv.request;
 
+import com.core.arnuv.enums.TamanoPerroEnum;
 import com.core.arnuv.model.Personadetalle;
 import com.core.arnuv.utils.RequestComun;
 import jakarta.persistence.Temporal;
@@ -8,6 +9,9 @@ import lombok.Data;
 import org.hibernate.annotations.Comment;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Data
 public class PersonaDetalleRequest extends RequestComun<Personadetalle> {
@@ -56,5 +60,21 @@ public class PersonaDetalleRequest extends RequestComun<Personadetalle> {
 	@Comment("longitud")
 	private float longitud;
 
-
+	@Comment("String de records academicos")
+	private String recordsAcademicos;
+	
+	@Comment("Lista de records academicos")
+	private List<RecordAcademicoRequest> recordsAcademicosList;
+	
+	@Comment("Experiencia previa")
+	private String experienciaPrevia;
+	
+	@Comment("Tipo persona")
+	private String tipoPersona;
+	
+	@Comment("Anios de experiencia")
+	private Integer aniosExperiencia;
+	
+	@Comment("Tamanos aceptados")
+	private Set<TamanoPerroEnum> tamanosAceptados = new HashSet<>();
 }

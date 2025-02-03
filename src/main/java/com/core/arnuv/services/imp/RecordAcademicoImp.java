@@ -5,8 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.core.arnuv.model.CatalogoDetalle;
-import com.core.arnuv.model.Personadetalle;
 import com.core.arnuv.model.RecordAcademico;
 import com.core.arnuv.repository.IRecordAcademicoRepository;
 import com.core.arnuv.service.IRecordAcademicoService;

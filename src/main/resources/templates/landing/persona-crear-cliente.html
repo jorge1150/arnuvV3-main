@@ -1,136 +1,228 @@
 
 <!DOCTYPE html>
 <html :class="{ 'theme-dark': light }" x-data="data()"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Crear Persona</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" th:href="@{/content/css/tailwind.output.css}" />
-    <link rel="stylesheet" th:href="@{/content/css/styles.css}">
-    <script
-      src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"
-      defer
-    ></script>
-    <script th:src="@{/content/js/init-alpine.js}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
-    <script	th:src="@{${linkMapaGoogle.valorText}}"></script>
-    
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Crear Persona</title>
+<link
+	href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+	rel="stylesheet" />
+<link rel="stylesheet" th:href="@{/content/css/tailwind.output.css}" />
+<link rel="stylesheet" th:href="@{/content/css/styles.css}">
+<script
+	src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"
+	defer></script>
+<script th:src="@{/content/js/init-alpine.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script th:src="@{${linkMapaGoogle.valorText}}"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <style>
 #map {
 	height: 150px;
 	width: 100%;
 }
 </style>
-<script th:src="@{/content/js/validaciones.js}"defer></script>
-  </head>
-  <body>
-    <div class="flex items-center min-h-screen p-6 bg-gray-50 dark:bg-gray-900 comic-font">
-      <div
-        class="flex-1 h-full max-w-4xl mx-auto overflow-hidden bg-white rounded-lg shadow-xl dark:bg-gray-800"
-      >
-      <div class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
-                    <div id="map" class="w-full h-96 bg-gray-200 rounded-lg"></div>
-        <div class="flex flex-col overflow-y-auto md:flex-row">
-        
-          <div class="h-32 md:h-auto md:w-1/2">
-            <img
-              aria-hidden="true"
-              class="object-cover w-full h-full dark:hidden"
-              th:src="@{/content/img/pasear-perro.png}"
-              alt="Office"
-            />
-            <img
-              aria-hidden="true"
-              class="hidden object-cover w-full h-full dark:block"
-              th:src="@{/content/img/pasear-perro.png}"
-              alt="Office"
-            />
-          </div>
-          <div class="flex items-center justify-center p-6 sm:p-12 md:w-1/2">
-            <div class="w-full">
-              <h1
-                class="mb-4 text-xl font-semibold text-gray-700 dark:text-gray-200">
-                CREA TU USUARIO
-              </h1>
+<script th:src="@{/content/js/validaciones.js}" defer></script>
+</head>
+<body>
 
-			
 
-              <form th:action="@{/auth/create-access}" th:object="${nuevo}" class="form-material" method="post" enctype="multipart/form-data">
-                    <div class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
-                        <label class="block text-sm">
-                            <span class="text-gray-700 dark:text-gray-400">Nombres</span>
-                            <input th:field="*{nombres}" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                                   placeholder="Nombre"
-                                   oninput="validaNombreApellido(this)"
-                                   required/>
-                        </label>
+	<div
+		class="flex items-center min-h-screen p-6 bg-gray-50 dark:bg-gray-900 comic-font w-full">
+		<div
+			class="flex-1 h-full mx-auto overflow-hidden bg-white rounded-lg shadow-xl dark:bg-gray-800"
+			th:classappend="${tipoPersona != 'P'} ? 'max-w-4xl' : ''">
+			<div
+				class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800 w-full">
+				<div id="map" class="w-full h-96 bg-gray-200 rounded-lg"></div>
+				<div class="flex flex-col overflow-y-auto md:flex-row h-full">
 
-                        <label class="block text-sm">
-                            <span class="text-gray-700 dark:text-gray-400">Apellidos</span>
-                            <input th:field="*{apellidos}" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                                   placeholder="Apellido"
-                                   oninput="validaNombreApellido(this)"
-                                   required/>
-                        </label>
+					<div class="h-32 md:h-auto">
+						<img aria-hidden="true" class="object-cover dark:hidden"
+							th:classappend="${tipoPersona != 'P'} ? 'w-full h-full' : ''"
+							th:src="@{/content/img/pasear-perro.png}" alt="Office" /> <img
+							aria-hidden="true"
+							class="hidden object-cover w-full h-full dark:block"
+							th:src="@{/content/img/pasear-perro.png}" alt="Office" />
+					</div>
+					<div class="flex items-center justify-center p-6 sm:p-12 md:w-1/2">
+						<div class="w-full text-left">
+							<h1
+								class="mb-4 text-xl font-semibold text-gray-700 dark:text-gray-200">
+								CREA TU USUARIO</h1>
+							<form th:action="@{/auth/create-access}" th:object="${nuevo}"
+								class="form-material" method="post"
+								enctype="multipart/form-data" id="formulario">
+								<div class="flex space-x-6 w-full">
+									<!-- Primer formulario -->
+									<div class="flex-grow bg-white p-6 rounded-lg shadow-md">
+										<h2 class="text-lg font-semibold">Información personal</h2>
+										<hr />
+										<br /> <label class="block text-sm"> <span
+											class="text-gray-700 dark:text-gray-400">Nombres</span> <input
+											th:field="*{nombres}"
+											class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+											placeholder="Nombre" oninput="validaNombreApellido(this)"
+											required />
+										</label> <label class="block text-sm"> <span
+											class="text-gray-700 dark:text-gray-400">Apellidos</span> <input
+											th:field="*{apellidos}"
+											class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+											placeholder="Apellido" oninput="validaNombreApellido(this)"
+											required />
+										</label> <label class="block text-sm"> <span
+											class="text-gray-700 dark:text-gray-400">Identificación</span>
+											<input th:field="*{identificacion}"
+											class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+											placeholder="Identificacion"
+											oninput="validaIdentificacion(this)" required />
+										</label>
+										<div id="mensaje-error" style="color: red;"></div>
+										<label class="block text-sm"> <span
+											class="text-gray-700 dark:text-gray-400">Celular</span> <input
+											th:field="*{celular}"
+											class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+											placeholder="Celular" oninput="validaNumeroCelular(this)"
+											required />
+										</label>
+										<div id="mensaje-error-celular" style="color: red;"></div>
 
-                        <label class="block text-sm">
-                            <span class="text-gray-700 dark:text-gray-400">Identificación</span>
-                            <input th:field="*{identificacion}" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                                   placeholder="Identificacion"
-                                   oninput="validaIdentificacion(this)"
-                                   required/>
-                        </label>
-                        <div id="mensaje-error" style="color: red;"></div>
-                        <label class="block text-sm">
-                            <span class="text-gray-700 dark:text-gray-400">Celular</span>
-                            <input th:field="*{celular}" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                                   placeholder="Celular"
-                                   oninput="validaNumeroCelular(this)"
-                                   required/>
-                            <!--<div id="mensaje-error" style="color: red;"></div>-->
-                        </label>
-                        <div id="mensaje-error-celular" style="color: red;"></div>
+										<label class="block text-sm"> <span
+											class="text-gray-700 dark:text-gray-400">Correo
+												Electronico</span> <input th:field="*{email}"
+											class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+											placeholder="Correo" oninput="validarEmail(this)" required />
+										</label>
+										<div id="mensaje-error-email" style="color: red;"></div>
 
-                        <label class="block text-sm">
-                            <span class="text-gray-700 dark:text-gray-400">Correo Electronico</span>
-                            <input th:field="*{email}" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                                   placeholder="Correo"
-                                   oninput="validarEmail(this)"                                  
-                                   required
-                            />
-                        </label>
-                        <div id="mensaje-error-email" style="color: red;"></div>
+										<label class="block text-sm"> <span
+											class="text-gray-700 dark:text-gray-400">latitud</span> <input
+											th:field="*{latitud}" readonly
+											class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+											placeholder="" />
+										</label> <label class="block text-sm"> <span
+											class="text-gray-700 dark:text-gray-400">latitud</span> <input
+											th:field="*{longitud}" readonly
+											class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+											placeholder="" />
+										</label>
+										<h2
+											class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
+										<div class="block text-sm">
+											<button type="submit" style="width: 200px;"
+												class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">
+												Crear persona</button>
+										</div>
+									</div>
 
-                         <label class="block text-sm">
-                            <span class="text-gray-700 dark:text-gray-400">latitud</span>
-                            <input th:field="*{latitud}" readonly class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                                   placeholder=""/>
-                        </label>
-                         <label class="block text-sm">
-                            <span class="text-gray-700 dark:text-gray-400">latitud</span>
-                            <input th:field="*{longitud}" readonly class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                                   placeholder=""/>
-                        </label>
-                        <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
-                        <div class="block text-sm">
-                            <button type="submit" class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">
-                                Crear persona
-                            </button>
-                        </div>
-                    </div>
-                    <div th:if="${error != null}">
-                        <p  id="error-text" th:text="${error}"style="color: red;"></p>
-                    </div>
-                </form>
-                
-                 <script>
+									<div th:if="${error != null}">
+										<p id="error-text" th:text="${error}" style="color: red;"></p>
+									</div>
+
+									<!-- Segundo formulario -->
+									<div class="flex w-full" th:if="${tipoPersona == 'P'}">
+										<!-- Formulario 2 -->
+										<div class="flex-grow bg-white p-6 rounded-lg shadow-md"
+											style="margin-right: 16px;">
+											<div class="flex items-center">
+												<h2 class="text-lg font-semibold">Perfil Profesional y
+													Experiencia</h2>
+											</div>
+											<hr />
+											<br /> <label class="block text-sm"> <span
+												class="text-gray-700">Experiencia previa</span>
+											</label>
+											<textarea th:field="*{experienciaPrevia}"
+												class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+												style="width: 180px;"
+												placeholder="Cuentanos tu experiencia paseando mascotas..."
+												rows="4" required></textarea>
+
+
+											<label class="block text-sm"> <span
+												class="text-gray-700">Años de experiencia</span> <input
+												th:field="*{aniosExperiencia}" oninput="validarEdad(this)"
+												type="number"
+												class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+												placeholder="Años de experiencia" required />
+											</label> <br /> <label class="block text-sm text-gray-700">Tamaños
+												aceptados (Para escoger varios tener presionado el CTRL)</label> <select
+												th:field="*{tamanosAceptados}" class="form-select"
+												id="tamanos" multiple required>
+												<option th:each="item : ${comboTamano}"
+													th:value="${item.value}" th:text="${item.label}"></option>
+											</select>
+
+										</div>
+									</div>
+									<input type="hidden" th:field="*{recordsAcademicos}"
+										name="nuevo.recordsAcademicos" />
+										<input type="hidden" th:field="*{tipoPersona}" />
+							</form>
+
+							<form id="formularioTabla">
+								<div class="flex w-full" th:if="${tipoPersona == 'P'}">
+									<!-- Tabla a la derecha -->
+									<div
+										class="flex-shrink-0 w-1/3 bg-white p-6 rounded-lg shadow-md">
+										<h2 class="text-lg font-semibold">Record Académico</h2>
+										<hr />
+										<br />
+										<div>
+											<label class="block text-sm"> <span
+												class="text-gray-700">Nivel</span><br /> <select
+												class="form-select" id="nivel" required>
+													<option value="">Seleccione un nivel</option>
+													<option th:each="itemN : ${comboNivel}"
+														th:value="${itemN.value}" th:text="${itemN.label}"></option>
+											</select>
+											</label> <label class="block text-sm"> <span
+												class="text-gray-700">Institución</span> <input type="text"
+												id="institucion"
+												class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+												placeholder="Ej: Universidad XYZ" required />
+											</label> <label class="block text-sm"> <span
+												class="text-gray-700">Año</span> <input type="number"
+												id="anio"
+												class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+												placeholder="Ej: 2025" required />
+											</label> <label class="block text-sm"> <span
+												class="text-gray-700">Estado</span> <br /> <select
+												class="form-select" id="estado" required>
+													<option value="">Seleccione un estado</option>
+													<option th:each="itemN : ${comboEstado}"
+														th:value="${itemN.value}" th:text="${itemN.label}"></option>
+											</select>
+											</label> <br />
+											<button onclick="agregarFila()"
+												class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">Agregar
+												Record</button>
+										</div>
+										<table class="min-w-full table-auto mt-4 border">
+											<thead>
+												<tr class="bg-gray-200">
+													<th class="px-4 py-2 text-left">Nivel</th>
+													<th class="px-4 py-2 text-left">Institución</th>
+													<th class="px-4 py-2 text-left">Año</th>
+													<th class="px-4 py-2 text-left">Estado</th>
+													<th class="px-4 py-2 text-left">Acciones</th>
+												</tr>
+											</thead>
+											<tbody id="tabla-body">
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</form>
+
+						</div>
+					</div>
+					<div id="tipoClienteDiv" th:data-tipo-cliente="${tipoPersona}"></div>
+
+					<script>
                     document.addEventListener('DOMContentLoaded', function() {
                        //const errorElement = document.querySelector('div[th\\:if="${error != null}"]');
                        const errorElement = document.querySelector('p[id="error-text"]');
@@ -143,8 +235,8 @@
                        }
                    });
                 </script>
-                
-                <script>
+
+					<script>
                   document.addEventListener("DOMContentLoaded", function () {
                       const form = document.querySelector("form");
                       form.addEventListener("submit", function (event) {
@@ -169,23 +261,132 @@
                       });
                   });
               </script>
-              
 
-                <script>
+
+					<script>
                 let currentMarker = null;
                 // Initialize the map
                 window.onload = initMap;
                 </script>
+					<script>
+    // Función para agregar una fila
+    function agregarFila() {
+        // Obtener valores de los inputs
+        const nivel = document.getElementById("nivel").value.trim();
+        const institucion = document.getElementById("institucion").value.trim();
+        const anio = document.getElementById("anio").value.trim();
+        const estado = document.getElementById("estado").value.trim();
 
-             
-              </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
+        // Depuración de los valores antes de limpiar
+        console.log("Nivel:", nivel); // Verificar valor de nivel
+        console.log("Institución:", institucion); // Verificar valor de institución
+        console.log("Año:", anio); // Verificar valor de año
+        console.log("Estado:", estado); // Verificar valor de estado
 
-  </body>
+        // Validar que no estén vacíos
+        if (!nivel || !institucion || !anio || !estado) {
+            return;
+        }
+
+        // Crear una nueva fila
+        const tablaBody = document.getElementById("tabla-body");
+        const nuevaFila = document.createElement("tr");
+
+        nuevaFila.innerHTML = `
+            <td class="px-4 py-2">${nivel}</td>
+            <td class="px-4 py-2">${institucion}</td>
+            <td class="px-4 py-2">${anio}</td>
+            <td class="px-4 py-2">${estado}</td>
+            <td class="px-4 py-2">
+                <button onclick="eliminarFila(this)" class="px-2 py-1 bg-red-600 !bg-red-600 text-white rounded">Eliminar</button>
+            </td>
+        `;
+
+        // Agregar la fila a la tabla
+        tablaBody.appendChild(nuevaFila);
+
+        // Limpiar los inputs (después de agregar la fila)
+        document.getElementById("nivel").value = "";
+        document.getElementById("institucion").value = "";
+        document.getElementById("anio").value = "";
+        document.getElementById("estado").value = "";
+
+        // Mostrar mensaje de éxito en consola
+        console.log("Fila agregada correctamente");
+    }
+
+    // Función para eliminar una fila
+    function eliminarFila(boton) {
+        // Eliminar la fila correspondiente
+        boton.parentElement.parentElement.remove();
+    }
+
+    // Prevenir que el formulario se envíe (y recargue la página)
+    document.getElementById("formularioTabla").addEventListener("submit", function(event) {
+        event.preventDefault(); // Evita el envío del formulario
+        console.log("Formulario enviado"); // Verificar si el evento se dispara más de una vez
+        
+        // Asegurarse de que agregarFila se llame después del ciclo de eventos
+        setTimeout(function() {
+            agregarFila(); // Llama a la función para agregar la fila
+        }, 100); // Retardo de 100ms para evitar que el formulario se envíe varias veces
+    });
+</script>
+					<script>
+document.getElementById("formulario").addEventListener("submit", function(event) {
+    // Verificar si hay al menos una fila en la tabla
+    const tablaBody = document.getElementById("tabla-body");
+    if (tablaBody.rows.length === 0) {
+        alert("Debe agregar al menos una fila en la tabla.");
+        event.preventDefault(); // Evita que se envíe el formulario
+    }else{
+    	    // Llamar a la función para agregar los datos de la tabla a recordsAcademicos
+    	    agregarDatosATabla();
+
+    	    // Enviar el formulario normalmente
+    	    this.submit();
+    }
+});
+	</script>
+
+					<script> 
+	// Esta función recoge los datos de la tabla y los agrega a `nuevo.recordsAcademicos`
+	function agregarDatosATabla() {
+	    var recordsAcademicos = [];
+	    console.log('Inicia llenada de datos');
+
+	    // Recorre las filas de la tabla y recoge los valores
+	    $('#tabla-body tr').each(function() {
+	        var nivel = $(this).find('td').eq(0).text(); // O usa input[name="nivel"]
+	        var institucion = $(this).find('td').eq(1).text(); // O usa input[name="institucion"]
+	        var anio = $(this).find('td').eq(2).text(); // O usa input[name="anio"]
+	        var estado = $(this).find('td').eq(3).text(); // O usa input[name="estado"]
+	        console.log(nivel,institucion,anio,estado);
+	        // Agrega los datos al arreglo de recordsAcademicos
+	        recordsAcademicos.push({
+	        	nivelAcademico: nivel,
+	        	institution: institucion,
+	        	anioGraduacion: anio,
+	        	estadoAcademico: estado,
+	        	estaEliminado: true
+	        });
+	        console.log(JSON.stringify(recordsAcademicos));
+	    });
+
+	    if (recordsAcademicos.length > 0) {
+	        document.getElementById('recordsAcademicos').value = JSON.stringify(recordsAcademicos);
+	    }
+
+	    // Confirmación en la consola
+	    console.log("JSON generado:", document.getElementById('recordsAcademicos').value);
+	}
+
+	</script>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
 </html>
 
 <!-- 
