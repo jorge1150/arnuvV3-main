@@ -1,5 +1,6 @@
 package com.core.arnuv.services.imp;
 
+import com.core.arnuv.constants.Constants;
 import com.core.arnuv.enums.RolEnum;
 import com.core.arnuv.model.*;
 import com.core.arnuv.repository.IPersonaDetalleRepository;
@@ -107,7 +108,7 @@ public class PersonaDetalleServiceImp implements IPersonaDetalleService {
 			personaEnt.setFechaingreso(new Date());
 			personaEnt = insertarPersonaDetalle(personaEnt);
 			crearUbicacion(persona, personaEnt);
-			if ("P".equals(persona.getTipoPersona())) {
+			if (Constants.PASEADOR.equals(persona.getTipoPersona())) {
 				for (RecordAcademicoRequest item : persona.getRecordsAcademicosList()) {
 					var recordEnt = item.mapearDato(item, RecordAcademico.class, "");
 					listRecord.add(recordEnt);
@@ -173,7 +174,7 @@ public class PersonaDetalleServiceImp implements IPersonaDetalleService {
 			throw new Exception("El nombre de usuario ya se encuentra registrado.");
 		}
 		Usuariodetalle usuarioEnt = userService.insertarUsuarioDetalle(usuariodetalle);
-		var role = "P".equals(tipo) ? RolEnum.ROLE_WALKER : RolEnum.ROLE_USER;
+		var role = Constants.PASEADOR.equals(tipo) ? RolEnum.ROLE_WALKER : RolEnum.ROLE_USER;
 		crearRol(usuarioEnt, role);
 		return usuarioEnt;
 	}

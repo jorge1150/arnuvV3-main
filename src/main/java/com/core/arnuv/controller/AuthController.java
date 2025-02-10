@@ -1,5 +1,6 @@
 package com.core.arnuv.controller;
 
+import com.core.arnuv.constants.Constants;
 import com.core.arnuv.model.*;
 import com.core.arnuv.request.ChangePasswordRequest;
 import com.core.arnuv.request.PersonaDetalleRequest;
@@ -81,7 +82,7 @@ public class AuthController {
 	@GetMapping("/crearCliente/{tipoPersona}")
 	public String personCliente(@PathVariable("tipoPersona") String tipoPersona, Model model) {
 		Parametros linkMapaGoogle = parametroService.getParametro(KEY_LINK_MAPA_GOOGLE);
-		if ("P".equals(tipoPersona)) {
+		if (Constants.PASEADOR.equals(tipoPersona)) {
 			model.addAttribute("comboEstado", enumOptionService.getEstadoAcademicoOptions());
 			model.addAttribute("comboNivel", enumOptionService.getNivelAcademicoOptions());
 			model.addAttribute("comboTamano", enumOptionService.getTamanoPerroOptions());
@@ -105,7 +106,7 @@ public class AuthController {
 				return "redirect:/auth/crearCliente";
 			}
 
-			if ("P".equals(persona.getTipoPersona())) {
+			if (Constants.PASEADOR.equals(persona.getTipoPersona())) {
 				ObjectMapper objectMapper = new ObjectMapper();
 				List<RecordAcademicoRequest> recordsAcademicos = null;
 				recordsAcademicos = objectMapper.readValue(recordsAcademicosJson,

@@ -20,9 +20,11 @@ public class MailConfig {
 
         String username = getUsernameFromDatabase();
         String password = getPasswordFromDatabase();
+        int port = getPortFromDatabase();
+        String host = getHostFromDatabase();
 
-        mailSender.setHost("smtp.gmail.com");
-        mailSender.setPort(587);
+        mailSender.setHost(host);
+        mailSender.setPort(port);
         mailSender.setProtocol("smtp");
         mailSender.setUsername(username);
         mailSender.setPassword(password);
@@ -42,5 +44,13 @@ public class MailConfig {
 
     private String getPasswordFromDatabase() {
         return serviceParam.getParametro("MAILPASSWORD").getValorText();
+    }
+
+    private int getPortFromDatabase() {
+        return Integer.parseInt(serviceParam.getParametro("MAILPORT").getValorText());
+    }
+
+    private String getHostFromDatabase() {
+        return serviceParam.getParametro("MAILHOST").getValorText();
     }
 }
