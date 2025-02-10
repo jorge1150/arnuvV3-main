@@ -28,13 +28,11 @@
 <script th:src="@{/content/js/validaciones.js}" defer></script>
 </head>
 <body>
-
-
 	<div
 		class="flex items-center min-h-screen p-6 bg-gray-50 dark:bg-gray-900 comic-font w-full">
 		<div
 			class="flex-1 h-full mx-auto overflow-hidden bg-white rounded-lg shadow-xl dark:bg-gray-800"
-			th:classappend="${tipoPersona != 'P'} ? 'max-w-4xl' : ''">
+			th:classappend="${tipoPersona != 'Paseador'} ? 'max-w-4xl' : ''">
 			<div
 				class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800 w-full">
 				<div id="map" class="w-full h-96 bg-gray-200 rounded-lg"></div>
@@ -42,7 +40,7 @@
 
 					<div class="h-32 md:h-auto">
 						<img aria-hidden="true" class="object-cover dark:hidden"
-							th:classappend="${tipoPersona != 'P'} ? 'w-full h-full' : ''"
+							th:classappend="${tipoPersona != 'Paseador'} ? 'w-full h-full' : ''"
 							th:src="@{/content/img/pasear-perro.png}" alt="Office" /> <img
 							aria-hidden="true"
 							class="hidden object-cover w-full h-full dark:block"
@@ -53,171 +51,137 @@
 							<h1
 								class="mb-4 text-xl font-semibold text-gray-700 dark:text-gray-200">
 								CREA TU USUARIO</h1>
-							<form th:action="@{/auth/create-access}" th:object="${nuevo}"
-								class="form-material" method="post"
-								enctype="multipart/form-data" id="formulario">
-								<div class="flex space-x-6 w-full">
-									<!-- Primer formulario -->
-									<div class="flex-grow bg-white p-6 rounded-lg shadow-md">
-										<h2 class="text-lg font-semibold">Información personal</h2>
-										<hr />
-										<br /> <label class="block text-sm"> <span
-											class="text-gray-700 dark:text-gray-400">Nombres</span> <input
-											th:field="*{nombres}"
-											class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-											placeholder="Nombre" oninput="validaNombreApellido(this)"
-											required />
-										</label> <label class="block text-sm"> <span
-											class="text-gray-700 dark:text-gray-400">Apellidos</span> <input
-											th:field="*{apellidos}"
-											class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-											placeholder="Apellido" oninput="validaNombreApellido(this)"
-											required />
-										</label> <label class="block text-sm"> <span
-											class="text-gray-700 dark:text-gray-400">Identificación</span>
-											<input th:field="*{identificacion}"
-											class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-											placeholder="Identificacion"
-											oninput="validaIdentificacion(this)" required />
-										</label>
-										<div id="mensaje-error" style="color: red;"></div>
-										<label class="block text-sm"> <span
-											class="text-gray-700 dark:text-gray-400">Celular</span> <input
-											th:field="*{celular}"
-											class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-											placeholder="Celular" oninput="validaNumeroCelular(this)"
-											required />
-										</label>
-										<div id="mensaje-error-celular" style="color: red;"></div>
+							<div class="flex flex-col space-y-6 w-full">
+								<form th:action="@{/auth/create-access}" th:object="${nuevo}"
+									class="form-material" method="post"
+									enctype="multipart/form-data" id="formulario">
 
-										<label class="block text-sm"> <span
-											class="text-gray-700 dark:text-gray-400">Correo
-												Electronico</span> <input th:field="*{email}"
-											class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-											placeholder="Correo" oninput="validarEmail(this)" required />
-										</label>
-										<div id="mensaje-error-email" style="color: red;"></div>
-
-										<label class="block text-sm"> <span
-											class="text-gray-700 dark:text-gray-400">latitud</span> <input
-											th:field="*{latitud}" readonly
-											class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-											placeholder="" />
-										</label> <label class="block text-sm"> <span
-											class="text-gray-700 dark:text-gray-400">latitud</span> <input
-											th:field="*{longitud}" readonly
-											class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-											placeholder="" />
-										</label>
-										<h2
-											class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
-										<div class="block text-sm">
-											<button type="submit" style="width: 200px;"
-												class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">
-												Crear persona</button>
-										</div>
-									</div>
-
-									<div th:if="${error != null}">
-										<p id="error-text" th:text="${error}" style="color: red;"></p>
-									</div>
-
-									<!-- Segundo formulario -->
-									<div class="flex w-full" th:if="${tipoPersona == 'P'}">
-										<!-- Formulario 2 -->
-										<div class="flex-grow bg-white p-6 rounded-lg shadow-md"
-											style="margin-right: 16px;">
-											<div class="flex items-center">
-												<h2 class="text-lg font-semibold">Perfil Profesional y
-													Experiencia</h2>
-											</div>
+									<div class="flex space-x-4">
+										<!-- Primer formulario -->
+										<div class="flex-grow bg-white p-6 rounded-lg shadow-md">
+											<h2 class="text-lg font-semibold">Información personal</h2>
 											<hr />
 											<br /> <label class="block text-sm"> <span
-												class="text-gray-700">Experiencia previa</span>
+												class="text-gray-700 dark:text-gray-400">Nombres</span> <input
+												th:field="*{nombres}"
+												class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+												placeholder="Nombre" oninput="validaNombreApellido(this)"
+												required />
+											</label> <label class="block text-sm"> <span
+												class="text-gray-700 dark:text-gray-400">Apellidos</span> <input
+												th:field="*{apellidos}"
+												class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+												placeholder="Apellido" oninput="validaNombreApellido(this)"
+												required />
+											</label> <label class="block text-sm"> <span
+												class="text-gray-700 dark:text-gray-400">Identificación</span>
+												<input th:field="*{identificacion}"
+												class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+												placeholder="Identificacion"
+												oninput="validaIdentificacion(this)" required />
 											</label>
-											<textarea th:field="*{experienciaPrevia}"
+											<div id="mensaje-error" style="color: red;"></div>
+											<label class="block text-sm"> <span
+												class="text-gray-700 dark:text-gray-400">Celular</span> <input
+												th:field="*{celular}"
 												class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-												style="width: 180px;"
-												placeholder="Cuentanos tu experiencia paseando mascotas..."
-												rows="4" required></textarea>
-
+												placeholder="Celular" oninput="validaNumeroCelular(this)"
+												required />
+											</label>
+											<div id="mensaje-error-celular" style="color: red;"></div>
 
 											<label class="block text-sm"> <span
-												class="text-gray-700">Años de experiencia</span> <input
-												th:field="*{aniosExperiencia}" oninput="validarEdad(this)"
-												type="number"
+												class="text-gray-700 dark:text-gray-400">Correo
+													Electronico</span> <input th:field="*{email}"
 												class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-												placeholder="Años de experiencia" required />
-											</label> <br /> <label class="block text-sm text-gray-700">Tamaños
-												aceptados (Para escoger varios tener presionado el CTRL)</label> <select
-												th:field="*{tamanosAceptados}" class="form-select"
-												id="tamanos" multiple required>
-												<option th:each="item : ${comboTamano}"
-													th:value="${item.value}" th:text="${item.label}"></option>
-											</select>
+												placeholder="Correo" oninput="validarEmail(this)" required />
+											</label>
+											<div id="mensaje-error-email" style="color: red;"></div>
 
-										</div>
-									</div>
-									<input type="hidden" th:field="*{recordsAcademicos}"
-										name="nuevo.recordsAcademicos" />
-										<input type="hidden" th:field="*{tipoPersona}" />
-							</form>
-
-							<form id="formularioTabla">
-								<div class="flex w-full" th:if="${tipoPersona == 'P'}">
-									<!-- Tabla a la derecha -->
-									<div
-										class="flex-shrink-0 w-1/3 bg-white p-6 rounded-lg shadow-md">
-										<h2 class="text-lg font-semibold">Record Académico</h2>
-										<hr />
-										<br />
-										<div>
 											<label class="block text-sm"> <span
-												class="text-gray-700">Nivel</span><br /> <select
-												class="form-select" id="nivel" required>
-													<option value="">Seleccione un nivel</option>
-													<option th:each="itemN : ${comboNivel}"
-														th:value="${itemN.value}" th:text="${itemN.label}"></option>
-											</select>
-											</label> <label class="block text-sm"> <span
-												class="text-gray-700">Institución</span> <input type="text"
-												id="institucion"
+												class="text-gray-700 dark:text-gray-400">latitud</span> <input
+												th:field="*{latitud}" readonly
 												class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-												placeholder="Ej: Universidad XYZ" required />
+												placeholder="" />
 											</label> <label class="block text-sm"> <span
-												class="text-gray-700">Año</span> <input type="number"
-												id="anio"
+												class="text-gray-700 dark:text-gray-400">latitud</span> <input
+												th:field="*{longitud}" readonly
 												class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-												placeholder="Ej: 2025" required />
-											</label> <label class="block text-sm"> <span
-												class="text-gray-700">Estado</span> <br /> <select
-												class="form-select" id="estado" required>
-													<option value="">Seleccione un estado</option>
-													<option th:each="itemN : ${comboEstado}"
-														th:value="${itemN.value}" th:text="${itemN.label}"></option>
-											</select>
-											</label> <br />
-											<button onclick="agregarFila()"
-												class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">Agregar
-												Record</button>
+												placeholder="" />
+											</label>
+											<h2
+												class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
+											<div class="block text-sm">
+												<button type="submit" style="width: 200px;"
+													class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">
+													Crear persona</button>
+											</div>
 										</div>
-										<table class="min-w-full table-auto mt-4 border">
-											<thead>
-												<tr class="bg-gray-200">
-													<th class="px-4 py-2 text-left">Nivel</th>
-													<th class="px-4 py-2 text-left">Institución</th>
-													<th class="px-4 py-2 text-left">Año</th>
-													<th class="px-4 py-2 text-left">Estado</th>
-													<th class="px-4 py-2 text-left">Acciones</th>
-												</tr>
-											</thead>
-											<tbody id="tabla-body">
-											</tbody>
-										</table>
-									</div>
-								</div>
-							</form>
 
+										<div th:if="${error != null}">
+											<p id="error-text" th:text="${error}" style="color: red;"></p>
+										</div>
+
+										<!-- Segundo formulario -->
+										<div th:if="${tipoPersona == 'Paseador'}">
+											<!-- Formulario 2 -->
+											<div class="flex-grow bg-white p-6 rounded-lg shadow-md"
+												style="margin-right: 16px;">
+												<div class="flex items-center">
+													<h2 class="text-lg font-semibold">Perfil Profesional y
+														Experiencia</h2>
+												</div>
+												<hr />
+												<br /> <label class="block text-sm"> <span
+													class="text-gray-700">Experiencia previa</span>
+												</label>
+												<textarea th:field="*{experienciaPrevia}"
+													class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+													style="width: 800px;"
+													placeholder="Cuentanos tu experiencia paseando mascotas..."
+													rows="4" required></textarea>
+
+												<div class="flex space-x-4">
+													<!-- Años de experiencia -->
+													<label class="block text-sm w-1/2"> <span
+														class="text-gray-700">Años de experiencia</span> <input
+														th:field="*{aniosExperiencia}" oninput="validarEdad(this)"
+														type="number"
+														class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 
+                   focus:border-purple-400 focus:outline-none focus:shadow-outline-purple 
+                   dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+														placeholder="Años de experiencia" required />
+													</label>
+
+													<!-- Tamaños aceptados -->
+													<label class="block text-sm w-1/2"> <span
+														class="text-gray-700">Tamaños aceptados (Para
+															escoger varios tener presionado el CTRL)</span> <select
+														th:field="*{tamanosAceptados}"
+														class="form-select block w-full mt-1 text-center focus:border-purple-400 focus:outline-none focus:shadow-outline-purple"
+														id="tamanos" multiple required>
+															<option th:each="item : ${comboTamano}"
+																th:value="${item.value}" th:text="${item.label}"></option>
+													</select>
+													</label>
+												</div>
+												<br />
+												<div class="flex items-center">
+													<h2 class="text-lg font-semibold">Record Académico</h2>
+												</div>
+												<hr />
+												<br />
+												<button onclick="abrirModal()" id="registroacademico"
+													class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">
+													Abrir Record Académico</button>
+											</div>
+										</div>
+										<input type="hidden" th:field="*{recordsAcademicos}"
+											name="nuevo.recordsAcademicos" /> <input type="hidden"
+											th:field="*{tipoPersona}" />
+									</div>
+								</form>
+							</div>
 						</div>
 					</div>
 					<div id="tipoClienteDiv" th:data-tipo-cliente="${tipoPersona}"></div>
@@ -261,7 +225,6 @@
                       });
                   });
               </script>
-
 
 					<script>
                 let currentMarker = null;
@@ -336,15 +299,24 @@
 document.getElementById("formulario").addEventListener("submit", function(event) {
     // Verificar si hay al menos una fila en la tabla
     const tablaBody = document.getElementById("tabla-body");
-    if (tablaBody.rows.length === 0) {
-        alert("Debe agregar al menos una fila en la tabla.");
-        event.preventDefault(); // Evita que se envíe el formulario
-    }else{
-    	    // Llamar a la función para agregar los datos de la tabla a recordsAcademicos
-    	    agregarDatosATabla();
+    const esRegistroAcademico = event.submitter && event.submitter.id === "registroacademico";
 
-    	    // Enviar el formulario normalmente
-    	    this.submit();
+    if(!esRegistroAcademico){
+      if (tablaBody.rows.length === 0) {
+        Swal.fire({
+                                  icon: 'error',
+                                  title: 'Error',
+                                  text: 'Debe tener al menos un registro en record académico.'
+                              });
+        event.preventDefault(); // Evita que se envíe el formulario
+      }else{
+            // Llamar a la función para agregar los datos de la tabla a recordsAcademicos
+            agregarDatosATabla();
+            // Enviar el formulario normalmente
+            this.submit();
+      }
+    }else{
+      event.preventDefault();
     }
 });
 	</script>
@@ -386,6 +358,87 @@ document.getElementById("formulario").addEventListener("submit", function(event)
 			</div>
 		</div>
 	</div>
+
+	<div id="modal"
+		class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
+		<div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
+
+			<form id="formularioTabla">
+				<div class="flex w-full" th:if="${tipoPersona == 'Paseador'}">
+					<!-- Tabla a la derecha -->
+					<div class="flex-shrink-0 w-1/3 bg-white p-6 rounded-lg shadow-md">
+						<h2 class="text-lg font-semibold">Record Académico</h2>
+						<hr />
+						<br />
+						<div>
+							<div class="flex space-x-4">
+								<label class="block text-sm"> <span
+									class="text-gray-700">Nivel</span><br /> <select
+									class="form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple"
+									id="nivel" required>
+										<option value="">Seleccione un nivel</option>
+										<option th:each="itemN : ${comboNivel}"
+											th:value="${itemN.value}" th:text="${itemN.label}"></option>
+								</select>
+								</label> <label class="block text-sm"> <span
+									class="text-gray-700">Institución</span> <input type="text"
+									id="institucion"
+									class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+									placeholder="Ej: Universidad XYZ" required />
+								</label> <label class="block text-sm"> <span
+									class="text-gray-700">Año</span> <input type="number" id="anio"
+									class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+									placeholder="Ej: 2025" required />
+								</label> <label class="block text-sm"> <span
+									class="text-gray-700">Estado</span> <br /> <select
+									class="form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple"
+									id="estado" required>
+										<option value="">Seleccione un estado</option>
+										<option th:each="itemN : ${comboEstado}"
+											th:value="${itemN.value}" th:text="${itemN.label}"></option>
+								</select>
+								</label>
+							</div>
+							<br />
+							<div class="mt-4 flex justify-end space-x-4">
+								<button onclick="agregarFila()"
+									class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">Agregar
+									Record</button>
+
+								<button onclick="cerrarModal()" type="button"
+									class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">
+									Cerrar</button>
+							</div>
+						</div>
+						<table class="min-w-full table-auto mt-4 border w-full">
+							<thead>
+								<tr class="bg-gray-200">
+									<th class="px-4 py-2 text-left">Nivel</th>
+									<th class="px-4 py-2 text-left">Institución</th>
+									<th class="px-4 py-2 text-left">Año</th>
+									<th class="px-4 py-2 text-left">Estado</th>
+									<th class="px-4 py-2 text-left">Acciones</th>
+								</tr>
+							</thead>
+							<tbody id="tabla-body">
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<script>
+  function abrirModal() {
+    document.getElementById('modal').classList.remove('hidden');
+}
+
+function cerrarModal() {
+    document.getElementById('modal').classList.add('hidden');
+}
+</script>
+
 </body>
 </html>
 
