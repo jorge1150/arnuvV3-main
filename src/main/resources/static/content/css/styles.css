@@ -8,6 +8,12 @@
     font-family: 'Arial', sans-serif;
 }
 
+.bg-gray-soft {
+    background-color: #d3dbe0; /* Gris suave */
+    color: black;
+    font-family: 'Arial', sans-serif;
+}
+
 .bg-cream:hover {
     background-color: black; /* Cambia a negro al pasar el ratón */
     color: white; /* Cambia el texto a blanco al pasar el ratón */
