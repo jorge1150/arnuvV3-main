@@ -62,6 +62,14 @@
 											<h2 class="text-lg font-semibold">Información personal</h2>
 											<hr />
 											<br /> <label class="block text-sm"> <span
+												class="text-gray-700 dark:text-gray-400">Identificación</span>
+												<input th:field="*{identificacion}"
+												class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+												placeholder="Identificacion"
+												oninput="validaIdentificacion(this)" required />
+											</label>
+											<div id="mensaje-error" style="color: red;"></div>
+											<label class="block text-sm"> <span
 												class="text-gray-700 dark:text-gray-400">Nombres</span> <input
 												th:field="*{nombres}"
 												class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
@@ -74,14 +82,6 @@
 												placeholder="Apellido" oninput="validaNombreApellido(this)"
 												required />
 											</label> <label class="block text-sm"> <span
-												class="text-gray-700 dark:text-gray-400">Identificación</span>
-												<input th:field="*{identificacion}"
-												class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-												placeholder="Identificacion"
-												oninput="validaIdentificacion(this)" required />
-											</label>
-											<div id="mensaje-error" style="color: red;"></div>
-											<label class="block text-sm"> <span
 												class="text-gray-700 dark:text-gray-400">Celular</span> <input
 												th:field="*{celular}"
 												class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
@@ -116,10 +116,9 @@
 													class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">
 													Crear persona</button>
 											</div>
-										</div>
-
-										<div th:if="${error != null}">
-											<p id="error-text" th:text="${error}" style="color: red;"></p>
+											<div th:if="${error != null}">
+												<p id="error-text" th:text="${error}" style="color: red;"></p>
+											</div>
 										</div>
 
 										<!-- Segundo formulario -->
@@ -132,7 +131,17 @@
 														Experiencia</h2>
 												</div>
 												<hr />
-												<br /> <label class="block text-sm"> <span
+												<br />
+												<!-- Años de experiencia -->
+												<label class="block text-sm w-1/2"> <span
+													class="text-gray-700">Años de experiencia</span> <input
+													th:field="*{aniosExperiencia}" oninput="validarEdad(this)"
+													type="number" style="width: 170px;"
+													class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 
+                   focus:border-purple-400 focus:outline-none focus:shadow-outline-purple 
+                   dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+													placeholder="Años de experiencia" required />
+												</label> <label class="block text-sm"> <span
 													class="text-gray-700">Experiencia previa</span>
 												</label>
 												<textarea th:field="*{experienciaPrevia}"
@@ -140,40 +149,38 @@
 													style="width: 800px;"
 													placeholder="Cuentanos tu experiencia paseando mascotas..."
 													rows="4" required></textarea>
-
-												<div class="flex space-x-4">
-													<!-- Años de experiencia -->
-													<label class="block text-sm w-1/2"> <span
-														class="text-gray-700">Años de experiencia</span> <input
-														th:field="*{aniosExperiencia}" oninput="validarEdad(this)"
-														type="number"
-														class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 
-                   focus:border-purple-400 focus:outline-none focus:shadow-outline-purple 
-                   dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-														placeholder="Años de experiencia" required />
-													</label>
-
-													<!-- Tamaños aceptados -->
-													<label class="block text-sm w-1/2"> <span
-														class="text-gray-700">Tamaños aceptados (Para
-															escoger varios tener presionado el CTRL)</span> <select
-														th:field="*{tamanosAceptados}"
-														class="form-select block w-full mt-1 text-center focus:border-purple-400 focus:outline-none focus:shadow-outline-purple"
-														id="tamanos" multiple required>
-															<option th:each="item : ${comboTamano}"
-																th:value="${item.value}" th:text="${item.label}"></option>
-													</select>
-													</label>
-												</div>
-												<br />
+												<!-- Tamaños aceptados -->
+												<label class="block text-sm w-1/2"> <span
+													class="text-gray-700">Tamaños aceptados (Para
+														escoger varios tener presionado el CTRL)</span> <select
+													th:field="*{tamanosAceptados}"
+													class="form-select block w-full mt-1 text-center focus:border-purple-400 focus:outline-none focus:shadow-outline-purple"
+													id="tamanos" multiple required>
+														<option th:each="item : ${comboTamano}"
+															th:value="${item.value}" th:text="${item.label}"></option>
+												</select>
+												</label> <br />
 												<div class="flex items-center">
 													<h2 class="text-lg font-semibold">Record Académico</h2>
+													<button onclick="abrirModal()" id="registroacademico"
+														class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">
+														+</button>
 												</div>
 												<hr />
 												<br />
-												<button onclick="abrirModal()" id="registroacademico"
-													class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">
-													Abrir Record Académico</button>
+												<table class="min-w-full table-auto mt-4 border w-full">
+													<thead>
+														<tr class="bg-gray-200">
+															<th class="px-4 py-2 text-left">Nivel</th>
+															<th class="px-4 py-2 text-left">Institución</th>
+															<th class="px-4 py-2 text-left">Año</th>
+															<th class="px-4 py-2 text-left">Estado</th>
+															<th class="px-4 py-2 text-left">Acción</th>
+														</tr>
+													</thead>
+													<tbody id="tabla-body">
+													</tbody>
+												</table>
 											</div>
 										</div>
 										<input type="hidden" th:field="*{recordsAcademicos}"
@@ -236,7 +243,7 @@
     function agregarFila() {
         // Obtener valores de los inputs
         const nivel = document.getElementById("nivel").value.trim();
-        const institucion = document.getElementById("institucion").value.trim();
+        const institucion = document.getElementById("institucion").value.trim().toUpperCase();
         const anio = document.getElementById("anio").value.trim();
         const estado = document.getElementById("estado").value.trim();
 
@@ -256,11 +263,11 @@
         const nuevaFila = document.createElement("tr");
 
         nuevaFila.innerHTML = `
-            <td class="px-4 py-2">${nivel}</td>
-            <td class="px-4 py-2">${institucion}</td>
-            <td class="px-4 py-2">${anio}</td>
-            <td class="px-4 py-2">${estado}</td>
-            <td class="px-4 py-2">
+            <td class="px-4 py-2" style="font-size: 14px;">${nivel}</td>
+            <td class="px-4 py-2" style="font-size: 14px;">${institucion}</td>
+            <td class="px-4 py-2" style="font-size: 14px;">${anio}</td>
+            <td class="px-4 py-2" style="font-size: 14px;">${estado}</td>
+            <td class="px-4 py-2" style="font-size: 14px;">
                 <button onclick="eliminarFila(this)" class="px-2 py-1 bg-red-600 !bg-red-600 text-white rounded">Eliminar</button>
             </td>
         `;
@@ -276,6 +283,7 @@
 
         // Mostrar mensaje de éxito en consola
         console.log("Fila agregada correctamente");
+        cerrarModal();
     }
 
     // Función para eliminar una fila
@@ -330,7 +338,7 @@ document.getElementById("formulario").addEventListener("submit", function(event)
 	    // Recorre las filas de la tabla y recoge los valores
 	    $('#tabla-body tr').each(function() {
 	        var nivel = $(this).find('td').eq(0).text(); // O usa input[name="nivel"]
-	        var institucion = $(this).find('td').eq(1).text(); // O usa input[name="institucion"]
+	        var institucion = $(this).find('td').eq(1).text().trim().toUpperCase(); // O usa input[name="institucion"]
 	        var anio = $(this).find('td').eq(2).text(); // O usa input[name="anio"]
 	        var estado = $(this).find('td').eq(3).text(); // O usa input[name="estado"]
 	        console.log(nivel,institucion,anio,estado);
@@ -366,7 +374,7 @@ document.getElementById("formulario").addEventListener("submit", function(event)
 			<form id="formularioTabla">
 				<div class="flex w-full" th:if="${tipoPersona == 'Paseador'}">
 					<!-- Tabla a la derecha -->
-					<div class="flex-shrink-0 w-1/3 bg-white p-6 rounded-lg shadow-md">
+					<div class="flex-shrink-0 w-1/3 bg-white rounded-lg ">
 						<h2 class="text-lg font-semibold">Record Académico</h2>
 						<hr />
 						<br />
@@ -381,15 +389,6 @@ document.getElementById("formulario").addEventListener("submit", function(event)
 											th:value="${itemN.value}" th:text="${itemN.label}"></option>
 								</select>
 								</label> <label class="block text-sm"> <span
-									class="text-gray-700">Institución</span> <input type="text"
-									id="institucion"
-									class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-									placeholder="Ej: Universidad XYZ" required />
-								</label> <label class="block text-sm"> <span
-									class="text-gray-700">Año</span> <input type="number" id="anio"
-									class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-									placeholder="Ej: 2025" required />
-								</label> <label class="block text-sm"> <span
 									class="text-gray-700">Estado</span> <br /> <select
 									class="form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple"
 									id="estado" required>
@@ -399,6 +398,22 @@ document.getElementById("formulario").addEventListener("submit", function(event)
 								</select>
 								</label>
 							</div>
+							<br/>
+							<div class="flex space-x-4">
+								<label class="block text-sm"> <span
+									class="text-gray-700">Institución</span> <input type="text"
+									id="institucion"
+									style="width: 203px;"
+									class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+									placeholder="Ej: Universidad XYZ" required />
+								</label> <br /> <label class="block text-sm"> <span
+									class="text-gray-700">Año de graduación</span> <input
+									type="number" id="anio"
+									style="width: 213px;"
+									class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+									placeholder="Ej: 2025" required />
+								</label>
+							</div>
 							<br />
 							<div class="mt-4 flex justify-end space-x-4">
 								<button onclick="agregarFila()"
@@ -406,23 +421,10 @@ document.getElementById("formulario").addEventListener("submit", function(event)
 									Record</button>
 
 								<button onclick="cerrarModal()" type="button"
-									class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">
+									class="bg-gray-soft px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">
 									Cerrar</button>
 							</div>
 						</div>
-						<table class="min-w-full table-auto mt-4 border w-full">
-							<thead>
-								<tr class="bg-gray-200">
-									<th class="px-4 py-2 text-left">Nivel</th>
-									<th class="px-4 py-2 text-left">Institución</th>
-									<th class="px-4 py-2 text-left">Año</th>
-									<th class="px-4 py-2 text-left">Estado</th>
-									<th class="px-4 py-2 text-left">Acciones</th>
-								</tr>
-							</thead>
-							<tbody id="tabla-body">
-							</tbody>
-						</table>
 					</div>
 				</div>
 			</form>

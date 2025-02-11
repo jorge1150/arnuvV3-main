@@ -103,7 +103,10 @@ public class AuthController {
 					persona.getIdentificacion());
 			if (!StringUtils.isEmpty(error)) {
 				redirectAttributes.addFlashAttribute("error", error);
-				return "redirect:/auth/crearCliente";
+				if(Constants.PASEADOR.equals(persona.getTipoPersona())){
+					return "redirect:/auth/crearCliente/Paseador";
+				}
+				return "redirect:/auth/crearCliente/Cliente";
 			}
 
 			if (Constants.PASEADOR.equals(persona.getTipoPersona())) {
