@@ -1,3 +1,12 @@
+# Usa una imagen oficial de OpenJDK 17
 FROM openjdk:17-jdk-alpine
-COPY jar/arnuv-0.0.1-SNAPSHOT.jar arnuv-service.jar
-ENTRYPOINT ["java", "-jar", "arnuv-service.jar"]
+
+# Establece el directorio de trabajo
+WORKDIR /app
+
+# Copia y ejecuta Maven para compilar el JAR dentro del contenedor
+COPY . .
+RUN ./mvnw clean package -DskipTests
+
+# Usa el JAR generado en target/
+CMD ["java", "-jar", "target/arnuv-0.0.1-SNAPSHOT.jar"]
