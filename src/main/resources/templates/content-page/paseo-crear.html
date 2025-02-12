@@ -65,7 +65,7 @@
 							<label class="block mt-4 text-sm"> <span class="text-gray-700 dark:text-gray-400"> Persona Paseadora </span> 
 							<select id="personaSelect"
 									th:field="*{idpersonapasedor.id}" required
-								class="readonly-select block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-multiselect focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray">
+								class=" block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-multiselect focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray">
 									<option value="0" selected>Seleccione una persona</option>
 									<option th:each="persona : ${persona}"	th:text="${persona.nombres}" th:value="${persona.id}" ></option>
 

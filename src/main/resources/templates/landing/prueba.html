@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dos Mapas con Leaflet</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map1, #map2 { height: 400px; width: 100%; margin-bottom: 20px; }
+        #coords { margin-top: 10px; padding: 5px; width: 250px; }
+    </style>
+</head>
+<body>
+
+    <h1>Mapa con Ubicación del Usuario</h1>
+    <input type="text" id="coords" placeholder="Coordenadas aquí" readonly>
+    <div id="map1"></div>
+
+    <h1>Mapa con Círculo en Mi Ubicación</h1>
+    <div id="map2"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // 📌 PRIMER MAPA: Ubicación del usuario
+        var map1 = L.map('map1').setView([0, 0], 2); // Inicialmente centrado en el mundo
+        var marker;
+
+        // Agregar capa de OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map1);
+
+        // 📌 SEGUNDO MAPA: Se inicializa sin ubicación fija
+        var map2 = L.map('map2').setView([0, 0], 2);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map2);
+        var circle; // Para el círculo dinámico
+
+        // Función para ubicar al usuario en ambos mapas
+        function setUserLocation(position) {
+            var lat = position.coords.latitude.toFixed(6);
+            var lng = position.coords.longitude.toFixed(6);
+
+            // 📌 Mapa 1: Marcar ubicación
+            map1.setView([lat, lng], 15);
+            if (marker) map1.removeLayer(marker);
+            marker = L.marker([lat, lng]).addTo(map1)
+                .bindPopup("📍 Tu ubicación: " + lat + ", " + lng)
+                .openPopup();
+            document.getElementById('coords').value = lat + ', ' + lng;
+
+            // 📌 Mapa 2: Dibujar círculo en la ubicación actual
+            map2.setView([lat, lng], 15);
+            if (circle) map2.removeLayer(circle);
+            circle = L.circle([lat, lng], {
+                color: 'red',
+                fillColor: '#f03',
+                fillOpacity: 0.5,
+                radius: 500
+            }).addTo(map2);
+        }
+
+        // Manejo de errores
+        function locationError() {
+            alert("No se pudo obtener tu ubicación. Asegúrate de habilitar el GPS.");
+        }
+
+        // Obtener ubicación del usuario
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(setUserLocation, locationError);
+        } else {
+            alert("Tu navegador no soporta la geolocalización.");
+        }
+
+        // Evento para seleccionar ubicación en el primer mapa
+        map1.on('click', function(e) {
+            var lat = e.latlng.lat.toFixed(6);
+            var lng = e.latlng.lng.toFixed(6);
+            document.getElementById('coords').value = lat + ', ' + lng;
+
+            if (marker) map1.removeLayer(marker);
+            marker = L.marker([lat, lng]).addTo(map1)
+                .bindPopup("Coordenadas: " + lat + ", " + lng)
+                .openPopup();
+        });
+
+    </script>
+
+</body>
+</html>

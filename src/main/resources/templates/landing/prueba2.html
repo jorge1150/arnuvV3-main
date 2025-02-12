@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaflet con Clustering y Rutas</title>
+    
+    <!-- CSS de Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
+
+    <style>
+        #map1, #map2 {
+            height: 500px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>🌍 Mapa 1: Clustering de Clientes</h2>
+    <div id="map1"></div>
+
+    <h2>📍 Mapa 2: Ruta Entre Cliente y Paseador</h2>
+    <div id="map2"></div>
+
+    <!-- Scripts de Leaflet y Plugins -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+
+    <script>
+        // ======================== MAPA 1: CLUSTERING DE CLIENTES ========================
+
+        var map1 = L.map('map1').setView([-0.244879, -78.542727], 12); // Coordenadas proporcionadas
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map1);
+
+        var markers = L.markerClusterGroup();
+
+        var clientes = [
+            { lat: -0.246618, lng: -78.535295, nombre: "🐶 Cliente 1" },
+            { lat: -0.250909, lng: -78.539457, nombre: "🐶 Cliente 2" },
+            { lat: -0.240438, lng: -78.533664, nombre: "🐶 Cliente 3" },
+            { lat: -0.245416, lng: -78.522763, nombre: "🐶 Cliente 4" },
+            { lat: -0.240567, lng: -78.546581, nombre: "🐶 Cliente 5" }
+        ];
+
+        clientes.forEach(cliente => {
+            var marker = L.marker([cliente.lat, cliente.lng])
+                .bindPopup(cliente.nombre);
+            markers.addLayer(marker);
+        });
+
+        map1.addLayer(markers);
+
+        // ======================== MAPA 2: RUTA ENTRE CLIENTE Y PASEADOR ========================
+
+        var map2 = L.map('map2').setView([-0.244879, -78.542727], 13); // Coordenadas proporcionadas
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map2);
+
+        // Ubicación del paseador (ejemplo)
+        var paseador = L.marker([-0.243500, -78.536500]).addTo(map2) // Coordenadas del paseador
+            .bindPopup("🚶 Paseador")
+            .openPopup();
+
+        // Ubicación de un cliente (ejemplo, Cliente 1)
+        var cliente = L.marker([-0.246618, -78.535295]).addTo(map2) // Coordenadas Cliente 1
+            .bindPopup("🐶 Cliente 1")
+            .openPopup();
+
+        // Dibujar la ruta entre paseador y cliente
+        L.Routing.control({
+            waypoints: [
+                L.latLng(-0.243500, -78.536500), // Paseador
+                L.latLng(-0.246618, -78.535295)  // Cliente
+            ],
+            routeWhileDragging: true
+        }).addTo(map2);
+    </script>
+
+</body>
+</html>
