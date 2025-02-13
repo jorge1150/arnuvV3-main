@@ -3,7 +3,7 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{content-page/plantilla}">
 <head>
-	<script th:src="@{/content/js/validaciones.js}"defer></script>
+<script th:src="@{/content/js/validaciones.js}" defer></script>
 
 </head>
 <body>
@@ -17,50 +17,49 @@
 					class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
 					<form th:action="@{/mascota/insertar}" th:object="${nuevo}"
 						class="form-material" method="post" enctype="multipart/form-data">
-						<div class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
+						<div
+							class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
 							<div class="mb-3">
-								<label for="formFile" class="block text-sm">Agrega una foto de tu mascota</label>								
-								<h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
-								<input class="form-control block text-sm" 
-										type="file"
-										required
-										id="formFile" 
-										name="file">
-							</div>							
-							<label class="block text-sm">
-								<span class="text-gray-700 dark:text-gray-400">Nombre</span>
-								<input class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-									placeholder="Nombre" th:field="*{nombre}"
-									oninput="validarNombre(this)"
-									required />
-							</label>
+								<label for="formFile" class="block text-sm">Agrega una
+									foto de tu mascota</label>
+								<h2
+									class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
+								<input class="form-control block text-sm" type="file" required
+									id="formFile" name="file">
+							</div>
 							<label class="block text-sm"> <span
+								class="text-gray-700 dark:text-gray-400">Nombre</span> <input
+								class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+								placeholder="Nombre" th:field="*{nombre}"
+								oninput="validarNombre(this)" required />
+							</label> <label class="block text-sm"> <span
 								class="text-gray-700 dark:text-gray-400">Edad</span> <input
 								class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-								placeholder="Edad" th:field="*{edad}"
-								type="number"
-								oninput="validarEdad(this)"
-								required />
+								placeholder="Edad" th:field="*{edad}" type="number"
+								oninput="validarEdad(this)" required />
+							</label> <label class="block text-sm"> <span
+								class="text-gray-700 dark:text-gray-400">Raza</span> <select
+								th:field="*{fkcatalogodetalle.id}" required
+								class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-multiselect focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray">
+									<option value="0" selected>Seleccione una raza</option>
+									<option th:each="catalogo : ${catalogo}"
+										th:text="${catalogo.nombre}" th:value="${catalogo.id}"></option>
+							</select>
+							</label> <label class="block text-sm"> <span
+								class="text-gray-700 dark:text-gray-400">Tamaño</span> <select
+								th:field="*{tamanoPerro}" required
+								class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-multiselect focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray">
+									<option value="0" selected>Seleccione un tamaño
+									<option th:each="item : ${comboTamano}"
+										th:text="${item.label}" th:value="${item.value}"></option>
+							</select>
+							</label> <label class="block text-sm"> <span
+								class="text-gray-700 dark:text-gray-400">Observación</span> <input
+								class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+								placeholder="" th:field="*{observacion}" />
 							</label>
-							<label class="block text-sm"> <span
-								class="text-gray-700 dark:text-gray-400">Raza</span>
-								<select
-									th:field="*{fkcatalogodetalle.id}" required
-									class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-multiselect focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray">
-										<option value="0"  selected>Seleccione una
-											raza</option>
-										<option th:each="catalogo : ${catalogo}"
-											th:text="${catalogo.nombre}" th:value="${catalogo.id}"></option>
-								</select>
-							</label>
-							
-							<label class="block text-sm">
-								<span class="text-gray-700 dark:text-gray-400">Observación</span>
-								<input class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-									placeholder=""  th:field="*{observacion}"/>
-							</label>
-							
-							
+
+
 							<h2
 								class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
 							<div>

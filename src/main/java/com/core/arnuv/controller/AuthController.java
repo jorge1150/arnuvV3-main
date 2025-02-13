@@ -58,7 +58,7 @@ public class AuthController {
 	private final IParametroService parametroService;
 	private final IEnumOptionService enumOptionService;
 	ObjectMapper objectMapper = new ObjectMapper();
-
+	
 	@GetMapping("/prueba")
 	public String prueba() {
 		return "landing/prueba";

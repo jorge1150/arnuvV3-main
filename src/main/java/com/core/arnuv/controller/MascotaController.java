@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.core.arnuv.model.MascotaDetalle;
 import com.core.arnuv.service.ICatalogoDetalleService;
+import com.core.arnuv.service.IEnumOptionService;
 import com.core.arnuv.service.IMascotaDetalleService;
 import com.core.arnuv.service.IPersonaDetalleService;
 import com.core.arnuv.utils.ArnuvUtils;
@@ -28,6 +29,7 @@ public class MascotaController {
 	public final IMascotaDetalleService mscotaDetalleService;
 	public final ICatalogoDetalleService catalogoDetalleService;
 	public final IPersonaDetalleService personaDetalleService;
+	private final IEnumOptionService enumOptionService;
 	public final ArnuvUtils arnuvUtils;
 
 	@GetMapping("/listar")
@@ -52,6 +54,7 @@ public class MascotaController {
 	public String crear(Model model) {
 		model.addAttribute("nuevo", new MascotaDetalle());	 
 		model.addAttribute("catalogo",catalogoDetalleService.listarCatalogoDetalle());
+		model.addAttribute("comboTamano", enumOptionService.getTamanoPerroOptions());
 		return "content-page/mascotas-crear";
 	}
 
@@ -87,6 +90,7 @@ public class MascotaController {
 		model.addAttribute("nuevo", itemrecuperado);
 		model.addAttribute("catalogo", catalogoDetalleService.listarCatalogoDetalle());
 		model.addAttribute("personas", personaDetalleService.listarTodosPersonaDetalle());
+		model.addAttribute("comboTamano", enumOptionService.getTamanoPerroOptions());
 		return "content-page/mascotas-crear";
 	}
 
