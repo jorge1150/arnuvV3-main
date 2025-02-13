@@ -6,12 +6,10 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import com.core.arnuv.model.MascotaDetalle;
-import com.core.arnuv.model.Paseo;
 import com.core.arnuv.repository.IMascotaDetalleRepository;
 import com.core.arnuv.service.IMascotaDetalleService;
 

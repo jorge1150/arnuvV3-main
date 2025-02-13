@@ -7,9 +7,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Crear Persona</title>
-<link
-	href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-	rel="stylesheet" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <link rel="stylesheet" th:href="@{/content/css/tailwind.output.css}" />
 <link rel="stylesheet" th:href="@{/content/css/styles.css}">
 <script
@@ -23,6 +21,12 @@
 #map {
 	height: 150px;
 	width: 100%;
+}
+
+#coords {
+	margin-top: 10px;
+	padding: 5px;
+	width: 250px;
 }
 </style>
 <script th:src="@{/content/js/validaciones.js}" defer></script>
@@ -100,12 +104,12 @@
 
 											<label class="block text-sm"> <span
 												class="text-gray-700 dark:text-gray-400">latitud</span> <input
-												th:field="*{latitud}" readonly
+												th:field="*{latitud}" id="latitud" readonly
 												class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
 												placeholder="" />
 											</label> <label class="block text-sm"> <span
 												class="text-gray-700 dark:text-gray-400">latitud</span> <input
-												th:field="*{longitud}" readonly
+												th:field="*{longitud}" id="longitud" readonly
 												class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
 												placeholder="" />
 											</label>
@@ -233,12 +237,59 @@
                   });
               </script>
 
-					<script>
-                let currentMarker = null;
-                // Initialize the map
-                window.onload = initMap;
-                </script>
-					<script>
+				<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>				
+				<script>
+				// 📌 PRIMER MAPA: Ubicación del usuario
+		        var map1 = L.map('map').setView([0, 0], 2); // Inicialmente centrado en el mundo
+		        var marker;
+		     // Agregar capa de OpenStreetMap
+		        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		            attribution: '© OpenStreetMap contributors'
+		        }).addTo(map1);
+		     
+		     // Función para ubicar al usuario en ambos mapas
+		        function setUserLocation(position) {
+		            var lat = position.coords.latitude.toFixed(6);
+		            var lng = position.coords.longitude.toFixed(6);
+
+		            // 📌 Mapa 1: Marcar ubicación
+		            map1.setView([lat, lng], 15);
+		            if (marker) map1.removeLayer(marker);
+		            marker = L.marker([lat, lng]).addTo(map1)
+		                .bindPopup("📍 Tu ubicación: " + lat + ", " + lng)
+		                .openPopup();
+		            document.getElementById('latitud').value = lat;
+		            document.getElementById('longitud').value = lng;
+
+		        }
+		     
+		     // Manejo de errores
+		        function locationError() {
+		            alert("No se pudo obtener tu ubicación. Asegúrate de habilitar el GPS.");
+		        }
+
+		        // Obtener ubicación del usuario
+		        if ("geolocation" in navigator) {
+		            navigator.geolocation.getCurrentPosition(setUserLocation, locationError);
+		        } else {
+		            alert("Tu navegador no soporta la geolocalización.");
+		        }
+
+		        // Evento para seleccionar ubicación en el primer mapa
+		        map1.on('click', function(e) {
+		            var lat = e.latlng.lat.toFixed(6);
+		            var lng = e.latlng.lng.toFixed(6);
+		            document.getElementById('latitud').value = lat;
+		            document.getElementById('longitud').value = lng;
+
+		            if (marker) map1.removeLayer(marker);
+		            marker = L.marker([lat, lng]).addTo(map1)
+		                .bindPopup("Coordenadas: " + lat + ", " + lng)
+		                .openPopup();
+		        });
+              </script>
+				
+				<script>
     // Función para agregar una fila
     function agregarFila() {
         // Obtener valores de los inputs
@@ -398,18 +449,16 @@ document.getElementById("formulario").addEventListener("submit", function(event)
 								</select>
 								</label>
 							</div>
-							<br/>
+							<br />
 							<div class="flex space-x-4">
 								<label class="block text-sm"> <span
 									class="text-gray-700">Institución</span> <input type="text"
-									id="institucion"
-									style="width: 203px;"
+									id="institucion" style="width: 203px;"
 									class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
 									placeholder="Ej: Universidad XYZ" required />
 								</label> <br /> <label class="block text-sm"> <span
 									class="text-gray-700">Año de graduación</span> <input
-									type="number" id="anio"
-									style="width: 213px;"
+									type="number" id="anio" style="width: 213px;"
 									class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
 									placeholder="Ej: 2025" required />
 								</label>

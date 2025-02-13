@@ -12,6 +12,8 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.core.arnuv.enums.TamanoPerroEnum;
+
 
 @Data
 @Comment("Tabla que almacena el detalle de la mascota")
@@ -59,5 +61,8 @@ public class MascotaDetalle  {
     private MultipartFile photoPet;
     
     private String observacion;
+    
+    @Enumerated(EnumType.STRING)
+    private TamanoPerroEnum tamanoPerro;
 
 }
