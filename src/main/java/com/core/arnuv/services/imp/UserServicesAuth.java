@@ -1,5 +1,6 @@
 package com.core.arnuv.services.imp;
 
+import com.core.arnuv.enums.RolEnum;
 import com.core.arnuv.model.Usuariodetalle;
 import com.core.arnuv.repository.IUsuarioDetalleRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,21 +21,26 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class UserServicesAuth implements UserDetailsService {
-    private final IUsuarioDetalleRepository repo;
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var usuario = repo.buscarPorEmailOrUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+	private final IUsuarioDetalleRepository repo;
 
-        if(usuario.getEstado() != null && usuario.getEstado()){
-            return new User(usuario.getUsername(), usuario.getPassword(), getAuthorities(usuario));
-        }
-        throw new LockedException("Usuario actualmente deshabilitado");
-    }
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		var usuario = repo.buscarPorEmailOrUsername(username)
+				.orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
-    private Collection<? extends GrantedAuthority> getAuthorities(Usuariodetalle usuario) {
-        return usuario.getAuthorities().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getAuthority()))
-                .collect(Collectors.toList());
-    }
+		if (usuario.getEstado() != null && usuario.getEstado()) {
+			return new User(usuario.getUsername(), usuario.getPassword(), getAuthorities(usuario));
+		}
+
+		if (RolEnum.ROLE_WALKER.getValue().equals(usuario.getUsuariorols().get(0).getIdrol().getNombre())) {
+			throw new LockedException(
+					"Tu cuenta está pendiente de aprobación. Espera la confirmación del administrador. 🐾");
+		}
+		throw new LockedException("Usuario actualmente deshabilitado");
+	}
+
+	private Collection<? extends GrantedAuthority> getAuthorities(Usuariodetalle usuario) {
+		return usuario.getAuthorities().stream().map(role -> new SimpleGrantedAuthority(role.getAuthority()))
+				.collect(Collectors.toList());
+	}
 }

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html x-data="data()" xmlns:th="https://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{content-page/plantilla}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaflet con Clustering y Rutas</title>
+    
+    <!-- CSS de Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
+
+    <style>
+        #map {
+            height: 500px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="espaciocontenidohtml">
+<input type="text" id="personaSelect" placeholder="Selecciona un paseador" readonly>
+
+    <h2>📍 Mapa 3: Pruebas Paseador</h2>
+    <div id="map"></div>
+
+    <!-- Scripts de Leaflet y Plugins -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+
+<script th:inline="javascript">
+    window.paseadoresData = [
+        /*[# th:each="paseador : ${listaPaseadores}"]*/
+        {
+            latitud: "[[${paseador.latitud}]]",
+            longitud: "[[${paseador.longitud}]]",
+            nombre: "Paseador [[${paseador.idUbicacion}]]"
+        },
+        /*[/]*/
+    ];
+</script>
+<script src="/content/js/mapa.js"></script>
+
+</div>
+</body>
+</html>
