@@ -63,11 +63,6 @@ public class AuthController {
 	public String prueba() {
 		return "landing/prueba";
 	}
-	
-	@GetMapping("/prueba2")
-	public String preuba2() {
-		return "landing/prueba2";
-	}
 
 	@GetMapping("/login")
 	public String login(Model model, HttpServletRequest request, @AuthenticationPrincipal UserDetails userDetails) {
