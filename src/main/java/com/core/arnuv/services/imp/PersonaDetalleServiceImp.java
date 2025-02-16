@@ -137,7 +137,7 @@ public class PersonaDetalleServiceImp implements IPersonaDetalleService {
 			recordA.setInstitution(recordAcademico.getInstitution());
 			recordA.setNivelAcademico(recordAcademico.getNivelAcademico());
 			recordA.setPersona(personaEnt);
-			academicoService.guardarRecordAcademico(recordA);
+			 var recordGuardado=academicoService.guardarRecordAcademico(recordA);
 		}
 	}
 

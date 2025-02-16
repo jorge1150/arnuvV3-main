@@ -138,6 +138,7 @@ public class AuthController {
 			PersonaDetalleRequest persona = objectMapper.readValue(usuario.getPersona(), PersonaDetalleRequest.class);
 			List<RecordAcademicoRequest> listRecord = persona.getRecordsAcademicosList();
 			var personaentity = servicioPersonaDetalle.guardarInformacionCompleta(persona, usuario, listRecord);
+			System.out.println("persona:"+personaentity);
 			Usuariodetalle usuarioEnt = userService.buscarPorEmailOrUserName(personaentity.getEmail());
 			String token = generarTokenRecuperacion();
 			guardarToken(usuarioEnt, token);
