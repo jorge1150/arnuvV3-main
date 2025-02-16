@@ -59,6 +59,11 @@ public class AuthController {
 	private final IEnumOptionService enumOptionService;
 	ObjectMapper objectMapper = new ObjectMapper();
 
+	@GetMapping("/prueba")
+	public String prueba() {
+		return "landing/prueba";
+	}
+
 	@GetMapping("/login")
 	public String login(Model model, HttpServletRequest request, @AuthenticationPrincipal UserDetails userDetails) {
 		if (userDetails != null) {
@@ -103,7 +108,7 @@ public class AuthController {
 					persona.getIdentificacion());
 			if (!StringUtils.isEmpty(error)) {
 				redirectAttributes.addFlashAttribute("error", error);
-				if(Constants.PASEADOR.equals(persona.getTipoPersona())){
+				if (Constants.PASEADOR.equals(persona.getTipoPersona())) {
 					return "redirect:/auth/crearCliente/Paseador";
 				}
 				return "redirect:/auth/crearCliente/Cliente";
@@ -138,19 +143,77 @@ public class AuthController {
 			PersonaDetalleRequest persona = objectMapper.readValue(usuario.getPersona(), PersonaDetalleRequest.class);
 			List<RecordAcademicoRequest> listRecord = persona.getRecordsAcademicosList();
 			var personaentity = servicioPersonaDetalle.guardarInformacionCompleta(persona, usuario, listRecord);
-			System.out.println("persona:"+personaentity);
+
 			Usuariodetalle usuarioEnt = userService.buscarPorEmailOrUserName(personaentity.getEmail());
+			if (Constants.PASEADOR.equals(persona.getTipoPersona())) {
+				return finalizarSolicitudPaseador(persona, personaentity, redirectAttributes, model);
+			}
+			return finalizarRegistroCliente(usuarioEnt, personaentity, redirectAttributes, model);
+
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			model.addAttribute("error", e.getMessage());
+			return "landing/usuario-crear-cliente";
+		}
+	}
+
+	public String finalizarSolicitudPaseador(PersonaDetalleRequest persona, Personadetalle personaentity,
+			RedirectAttributes redirectAttributes, Model model) {
+		String htmlContent = new String(parametroService.getParametro(KEY_MAIL_INFO_PASEADOR).getArchivos(),
+				StandardCharsets.UTF_8);
+		try {
+			htmlContent = htmlContent.replace("{{nombres}}", persona.getNombres() + " " + persona.getApellidos());
+			htmlContent = htmlContent.replace("{{identificacion}}", persona.getIdentificacion());
+			htmlContent = htmlContent.replace("{{email}}", persona.getEmail());
+			htmlContent = htmlContent.replace("{{celular}}", persona.getCelular());
+			htmlContent = htmlContent.replace("{{mesesExperiencia}}", persona.getAniosExperiencia().toString());
+			htmlContent = htmlContent.replace("{{experienciaPrevia}}", persona.getExperienciaPrevia());
+			StringBuilder recordsTable = new StringBuilder();
+			recordsTable.append("<table style='width: 100%; border-collapse: collapse; margin-top: 10px;'>");
+			recordsTable.append("<tr style='background-color: #ddd; color: #000; text-align: left;'>");
+			recordsTable.append("<th style='border: none; padding: 8px;'>Nivel Academico</th>");
+			recordsTable.append("<th style='border: none; padding: 8px;'>Institucion</th>");
+			recordsTable.append("<th style='border: none; padding: 8px;'>Graduacion</th>");
+			recordsTable.append("<th style='border: none; padding: 8px;'>Estado</th>");
+			recordsTable.append("</tr>");
+
+			for (RecordAcademicoRequest record : persona.getRecordsAcademicosList()) {
+				recordsTable.append("<tr>");
+				recordsTable.append("<td style='border: none; padding: 8px;'>" + record.getNivelAcademico() + "</td>");
+				recordsTable.append("<td style='border: none; padding: 8px;'>" + record.getInstitution() + "</td>");
+				recordsTable.append("<td style='border: none; padding: 8px;'>" + record.getAnioGraduacion() + "</td>");
+				recordsTable.append("<td style='border: none; padding: 8px;'>" + record.getEstadoAcademico() + "</td>");
+				recordsTable.append("</tr>");
+			}
+
+			recordsTable.append("</table>");
+
+			htmlContent = htmlContent.replace("{{recordsAcademicos}}", recordsTable.toString());
+			htmlContent = htmlContent.replace("{{tamanosAceptados}}",
+					persona.getTamanosAceptados().stream().map(Enum::name).collect(Collectors.joining(", ")));
+
+			emailSender.sendEmail(personaentity.getEmail(), "SOLICITUD DE PASEADOR", htmlContent);
+			redirectAttributes.addFlashAttribute("info",
+					"Tu solicitud está siendo procesada espera la confirmación por el administrador.");
+			return "redirect:/auth/login";
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			model.addAttribute("error", e.getMessage());
+			return "landing/usuario-crear-cliente";
+		}
+	}
+
+	public String finalizarRegistroCliente(Usuariodetalle usuarioEnt, Personadetalle personaentity,
+			RedirectAttributes redirectAttributes, Model model) {
+		try {
 			String token = generarTokenRecuperacion();
 			guardarToken(usuarioEnt, token);
-			String urlActivacion = "<a href=\"" + parametroService.getParametro(URL_DOMAIN_MAIL).getValorText()
-					+ "/auth/activarUsuario?token=" + token + "\">Clic para activar tu cuenta</a>";
-			String htmlContent = new String(parametroService.getParametro(KEY_PLANTILLA_MAIL).getArchivos(),
+			String urlActivacion = parametroService.getParametro(URL_DOMAIN_MAIL).getValorText()
+					+ "/auth/activarUsuario?token=" + token;
+			String htmlContent = new String(parametroService.getParametro(KEY_MAIL_CLIENTE).getArchivos(),
 					StandardCharsets.UTF_8);
-			String mensajeDinamico = "BIENVENIDO A LA FUNDACION ARNUV! <br> ACTIVA TU CUENTA EN EL SIGUIENTE ENLACE: <br>"
-					+ urlActivacion;
-			htmlContent = htmlContent.replace("{{mensajeBienvenida}}",
-					"<p style=\"font-size: 14px; line-height: 140%; text-align: center;\"><span style=\"font-family: Lato, sans-serif; font-size: 16px; line-height: 22.4px;\">"
-							+ mensajeDinamico + "</span></p>");
+			htmlContent = htmlContent.replace("{{enlace}}", urlActivacion);
+
 			emailSender.sendEmail(personaentity.getEmail(), "ACTIVACIÓN DE CUENTA", htmlContent);
 			redirectAttributes.addFlashAttribute("info", "Se ha enviado un correo electronico para activar la cuenta.");
 			return "redirect:/auth/login";

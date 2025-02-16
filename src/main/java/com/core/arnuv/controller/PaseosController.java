@@ -119,6 +119,15 @@ public class PaseosController {
 		model.addAttribute("mascota", mascotaDetalleService.findByIdpersonaId(idusuariologueado.getId()));
 		model.addAttribute("ubicaciones", ubicacionService.listarUbicacion());
 		model.addAttribute("linkMapaGoogle", linkMapaGoogle);
+		List<Personadetalle> listPersona = personaDetalleService.listarTodosPersonaDetalle();
+		List<Ubicacion> ubicaciones = new ArrayList<>();
+		for (Personadetalle persona : listPersona) {
+			for (Ubicacion ubicacion : persona.getUbicaciones()) {
+				ubicaciones.add(ubicacion);
+			}
+			
+		}
+		model.addAttribute("listaPaseadores", ubicaciones);
 		return "content-page/paseo-crear";
 	}
 
