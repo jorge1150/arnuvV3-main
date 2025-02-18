@@ -6,7 +6,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -61,7 +60,7 @@ public class PaseosController {
 
 	@GetMapping("/listar")
 	public String listar(Model model, HttpServletRequest request) {
-		var idusuariologueado =arnuvUtils.getLoggedInUsername();
+		var idusuariologueado = arnuvUtils.getLoggedInUsername();
 
 		if (request.isUserInRole("ADMIN")) {
 			List<Paseo> listapaseos = paseoService.listarPaseos();
@@ -82,27 +81,30 @@ public class PaseosController {
 	}
 
 	@GetMapping("/buscarPorFecha")
-	public String buscarPorFecha( Model model){
-		BusquedaFechaeDto busquedaFechasResponse= new BusquedaFechaeDto();
+	public String buscarPorFecha(Model model) {
+		BusquedaFechaeDto busquedaFechasResponse = new BusquedaFechaeDto();
 		model.addAttribute("nuevo", busquedaFechasResponse);
-		return "content-page/paseo-listar-por-fecha"; // Cambia esto por el nombre de la vista Thymeleaf que estás usando
+		return "content-page/paseo-listar-por-fecha"; // Cambia esto por el nombre de la vista Thymeleaf que estás
+														// usando
 	}
 
 	@GetMapping("/ListarbuscarPorFecha")
 	public String ListarbuscarPorFecha(
 			@RequestParam("fechaInicio") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
-			@RequestParam("fechaFin") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin,
-			Model model,HttpServletRequest request){
+			@RequestParam("fechaFin") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin, Model model,
+			HttpServletRequest request) {
 		Date fechaIni = Date.from(fechaInicio.atStartOfDay(ZoneId.systemDefault()).toInstant());
 		Date fechaFinal = Date.from(fechaFin.atStartOfDay(ZoneId.systemDefault()).toInstant());
-		var idusuariologueado =arnuvUtils.getLoggedInUsername();
+		var idusuariologueado = arnuvUtils.getLoggedInUsername();
 		if (request.isUserInRole("CLIENTE")) {
-			List<Paseo> listapaseos = paseoService.buscarRangoFechasCliente(fechaIni, fechaFinal, idusuariologueado.getId());
+			List<Paseo> listapaseos = paseoService.buscarRangoFechasCliente(fechaIni, fechaFinal,
+					idusuariologueado.getId());
 			model.addAttribute("lista", listapaseos);
 			return "content-page/paseo-listar-por-fecha";
 		}
 		if (request.isUserInRole("PASEADOR")) {
-			List<Paseo> listapaseos = paseoService.buscarRangoFechasPaseador(fechaIni, fechaFinal, idusuariologueado.getId());
+			List<Paseo> listapaseos = paseoService.buscarRangoFechasPaseador(fechaIni, fechaFinal,
+					idusuariologueado.getId());
 			model.addAttribute("lista", listapaseos);
 			return "content-page/paseo-listar-por-fecha";
 		}
@@ -110,24 +112,23 @@ public class PaseosController {
 	}
 
 	@GetMapping("/nuevo")
-	public String crear(Model model) {
-		var idusuariologueado =arnuvUtils.getLoggedInUsername();
-		Parametros linkMapaGoogle = parametroService.getParametro(KEY_LINK_MAPA_GOOGLE);
+	public String crear(Model model, HttpServletRequest request) {
+		var idusuariologueado = arnuvUtils.getLoggedInUsername();
 		model.addAttribute("nuevo", new Paseo());
 		model.addAttribute("persona", personaDetalleService.listarTodosPersonaDetalle());
 		model.addAttribute("tarifario", ITarifarioService.listarTarifarios());
 		model.addAttribute("mascota", mascotaDetalleService.findByIdpersonaId(idusuariologueado.getId()));
-		model.addAttribute("ubicaciones", ubicacionService.listarUbicacion());
-		model.addAttribute("linkMapaGoogle", linkMapaGoogle);
-		List<Personadetalle> listPersona = personaDetalleService.listarTodosPersonaDetalle();
-		List<Ubicacion> ubicaciones = new ArrayList<>();
-		for (Personadetalle persona : listPersona) {
-			for (Ubicacion ubicacion : persona.getUbicaciones()) {
-				ubicaciones.add(ubicacion);
-			}
-			
+
+		Ubicacion ubicacionDefault = ubicacionService.ubicacionPersonaPorDefecto(idusuariologueado.getId());
+		model.addAttribute("ubicacionDefault", ubicacionDefault);
+		model.addAttribute("listaPaseadores",
+				ubicacionService.findUbicacionesEnRangoKmPaseadores(ubicacionDefault.getLatitud(),
+						ubicacionDefault.getLongitud(), parametroService.getParametro(KM_BUSQUEDA).getValorNumber()));
+		model.addAttribute("vistaMapa", parametroService.getParametro(VISTA_MAPA).getValorNumber());
+		if (request.isUserInRole("ADMIN")) {
+			model.addAttribute("mascota", mascotaDetalleService.listarMascotasDetalle());
+			model.addAttribute("cliente", personaDetalleService.listarTodosPersonaDetalle());
 		}
-		model.addAttribute("listaPaseadores", ubicaciones);
 		return "content-page/paseo-crear";
 	}
 
@@ -140,15 +141,16 @@ public class PaseosController {
 		String formattedDate = formatter.format(date);
 		if (request.isUserInRole("CLIENTE")) {
 			Personadetalle personaCLiente = new Personadetalle();
-			var idusuariologueado =arnuvUtils.getLoggedInUsername().getId();
+			var idusuariologueado = arnuvUtils.getLoggedInUsername().getId();
 			personaCLiente.setId(idusuariologueado);
 			nuevo.setIdpersonacliente(personaCLiente);
 		}
 		Personadetalle personadetalle = personaDetalleService.buscarPorId(nuevo.getIdpersonapasedor().getId());
-		String htmlContent = new String(parametroService.getParametro(KEY_PLANTILLA_MAIL).getArchivos(), StandardCharsets.UTF_8);
+		String htmlContent = new String(parametroService.getParametro(KEY_PLANTILLA_MAIL).getArchivos(),
+				StandardCharsets.UTF_8);
 
 		String fechaRealInicio = nuevo.getFecharealinicio().toString();
-		String fechaEspanol= Strings.EMPTY;
+		String fechaEspanol = Strings.EMPTY;
 		try {
 			Date fecha = FECHA_FORMATO_ENTRADA.parse(fechaRealInicio);
 			fechaEspanol = FECHA_FORMATO_SALIDA.format(fecha);
@@ -156,66 +158,91 @@ public class PaseosController {
 			log.error("Ocurrio un error: {}", e.getMessage());
 		}
 		if (nuevo.getEstado().equals(ESTADO_PENDIENTE)) {
-			String mensajeDinamico = "SOLICITUD DE SERVICIO DE PASEO A MASCOTA ! FECHA:" + fechaEspanol+", REVISA TU BANDEJA DE PASEOS !!";
-			htmlContent = htmlContent.replace("{{mensajeBienvenida}}", "<p style=\"font-size: 14px; line-height: 140%; text-align: center;\"><span style=\"font-family: Lato, sans-serif; font-size: 16px; line-height: 22.4px;\">" + mensajeDinamico.toUpperCase() + "</span></p>");
-			emailSender.sendEmail(personadetalle.getEmail(), "SOLICITUD DE SERVICIO", htmlContent);					
+			String mensajeDinamico = "SOLICITUD DE SERVICIO DE PASEO A MASCOTA ! FECHA:" + fechaEspanol
+					+ ", REVISA TU BANDEJA DE PASEOS !!";
+			htmlContent = htmlContent.replace("{{mensajeBienvenida}}",
+					"<p style=\"font-size: 14px; line-height: 140%; text-align: center;\"><span style=\"font-family: Lato, sans-serif; font-size: 16px; line-height: 22.4px;\">"
+							+ mensajeDinamico.toUpperCase() + "</span></p>");
+			emailSender.sendEmail(personadetalle.getEmail(), "SOLICITUD DE SERVICIO", htmlContent);
 		}
 		if (nuevo.getEstado().equals(ESTADO_APROBADO)) {
 			Personadetalle personaCliente = personaDetalleService.buscarPorId(nuevo.getIdpersonacliente().getId());
-			String mensajeDinamico = "SU SOLICITUD DE SERVICIO FUE "+ESTADO_APROBADO+" FECHA:" + formattedDate+", REVISA TU BANDEJA DE PASEOS !!";
-			htmlContent = htmlContent.replace("{{mensajeBienvenida}}", "<p style=\"font-size: 14px; line-height: 140%; text-align: center;\"><span style=\"font-family: Lato, sans-serif; font-size: 16px; line-height: 22.4px;\">" + mensajeDinamico.toUpperCase() + "</span></p>");
-			emailSender.sendEmail(personaCliente.getEmail(), "SOLICITUD DE SERVICIO", htmlContent);					
+			String mensajeDinamico = "SU SOLICITUD DE SERVICIO FUE " + ESTADO_APROBADO + " FECHA:" + formattedDate
+					+ ", REVISA TU BANDEJA DE PASEOS !!";
+			htmlContent = htmlContent.replace("{{mensajeBienvenida}}",
+					"<p style=\"font-size: 14px; line-height: 140%; text-align: center;\"><span style=\"font-family: Lato, sans-serif; font-size: 16px; line-height: 22.4px;\">"
+							+ mensajeDinamico.toUpperCase() + "</span></p>");
+			emailSender.sendEmail(personaCliente.getEmail(), "SOLICITUD DE SERVICIO", htmlContent);
 		}
 		if (nuevo.getEstado().equals(ESTADO_RECHAZADO)) {
 			Personadetalle personaCliente = personaDetalleService.buscarPorId(nuevo.getIdpersonacliente().getId());
-			String mensajeDinamico = "SU SOLICITUD DE SERVICIO FUE "+ESTADO_RECHAZADO+" FECHA:" + formattedDate+", REVISA TU BANDEJA DE PASEOS !!";
-			htmlContent = htmlContent.replace("{{mensajeBienvenida}}", "<p style=\"font-size: 14px; line-height: 140%; text-align: center;\"><span style=\"font-family: Lato, sans-serif; font-size: 16px; line-height: 22.4px;\">" + mensajeDinamico.toUpperCase() + "</span></p>");
-			emailSender.sendEmail(personaCliente.getEmail(), "SOLICITUD DE SERVICIO", htmlContent);					
+			String mensajeDinamico = "SU SOLICITUD DE SERVICIO FUE " + ESTADO_RECHAZADO + " FECHA:" + formattedDate
+					+ ", REVISA TU BANDEJA DE PASEOS !!";
+			htmlContent = htmlContent.replace("{{mensajeBienvenida}}",
+					"<p style=\"font-size: 14px; line-height: 140%; text-align: center;\"><span style=\"font-family: Lato, sans-serif; font-size: 16px; line-height: 22.4px;\">"
+							+ mensajeDinamico.toUpperCase() + "</span></p>");
+			emailSender.sendEmail(personaCliente.getEmail(), "SOLICITUD DE SERVICIO", htmlContent);
 		}
-		
+
 		if (nuevo.getEstado().equals(ESTADO_PASEO_FINALIZADO)) {
 			Personadetalle personaCliente = personaDetalleService.buscarPorId(nuevo.getIdpersonacliente().getId());
-			String mensajeDinamico = "SU SOLICITUD DE SERVICIO CAMBIO A "+ESTADO_PASEO_FINALIZADO+" FECHA:" + formattedDate+", REVISA TU BANDEJA DE PASEOS !!";
-			htmlContent = htmlContent.replace("{{mensajeBienvenida}}", "<p style=\"font-size: 14px; line-height: 140%; text-align: center;\"><span style=\"font-family: Lato, sans-serif; font-size: 16px; line-height: 22.4px;\">" + mensajeDinamico.toUpperCase() + "</span></p>");
-			emailSender.sendEmail(personaCliente.getEmail(), "SOLICITUD DE SERVICIO", htmlContent);					
+			String mensajeDinamico = "SU SOLICITUD DE SERVICIO CAMBIO A " + ESTADO_PASEO_FINALIZADO + " FECHA:"
+					+ formattedDate + ", REVISA TU BANDEJA DE PASEOS !!";
+			htmlContent = htmlContent.replace("{{mensajeBienvenida}}",
+					"<p style=\"font-size: 14px; line-height: 140%; text-align: center;\"><span style=\"font-family: Lato, sans-serif; font-size: 16px; line-height: 22.4px;\">"
+							+ mensajeDinamico.toUpperCase() + "</span></p>");
+			emailSender.sendEmail(personaCliente.getEmail(), "SOLICITUD DE SERVICIO", htmlContent);
 		}
-		
+
 		if (nuevo.getEstado().equals(ESTADO_FINALIZADO)) {
-			String mensajeDinamico = "LA SOLICITUD DEL SERVICIO CAMBIO A "+ESTADO_FINALIZADO+" FECHA:" + formattedDate+", REVISA TU BANDEJA DE PASEOS !!";
-			htmlContent = htmlContent.replace("{{mensajeBienvenida}}", "<p style=\"font-size: 14px; line-height: 140%; text-align: center;\"><span style=\"font-family: Lato, sans-serif; font-size: 16px; line-height: 22.4px;\">" + mensajeDinamico.toUpperCase() + "</span></p>");
-			emailSender.sendEmail(personadetalle.getEmail(), "SOLICITUD DE SERVICIO", htmlContent);								
+			String mensajeDinamico = "LA SOLICITUD DEL SERVICIO CAMBIO A " + ESTADO_FINALIZADO + " FECHA:"
+					+ formattedDate + ", REVISA TU BANDEJA DE PASEOS !!";
+			htmlContent = htmlContent.replace("{{mensajeBienvenida}}",
+					"<p style=\"font-size: 14px; line-height: 140%; text-align: center;\"><span style=\"font-family: Lato, sans-serif; font-size: 16px; line-height: 22.4px;\">"
+							+ mensajeDinamico.toUpperCase() + "</span></p>");
+			emailSender.sendEmail(personadetalle.getEmail(), "SOLICITUD DE SERVICIO", htmlContent);
 		}
-	
-		
+
 		paseoService.insertarPaseo(nuevo);
 		return "redirect:/paseo/listar";
 
 	}
+
 	@GetMapping("/editar/{idpaseo}")
-	public String editar(@PathVariable(value = "idpaseo") int codigo, Model model) {
+	public String editar(@PathVariable(value = "idpaseo") int codigo, Model model, HttpServletRequest request) {
+		var idusuariologueado = arnuvUtils.getLoggedInUsername();
 		Paseo itemrecuperado = paseoService.buscarPorId(codigo);
-		Parametros linkMapaGoogle = parametroService.getParametro(KEY_LINK_MAPA_GOOGLE);
 		model.addAttribute("nuevo", itemrecuperado);
 		model.addAttribute("persona", personaDetalleService.listarTodosPersonaDetalle());
 		model.addAttribute("tarifario", ITarifarioService.listarTarifarios());
-		model.addAttribute("mascota", mascotaDetalleService.listarMascotasDetalle());
-		model.addAttribute("linkMapaGoogle", linkMapaGoogle);
+		model.addAttribute("mascota", mascotaDetalleService.findByIdpersonaId(idusuariologueado.getId()));
+		Ubicacion ubicacionDefault = ubicacionService.ubicacionPersonaPorDefecto(idusuariologueado.getId());
+		model.addAttribute("ubicacionDefault", ubicacionDefault);
+		model.addAttribute("listaPaseadores",
+				ubicacionService.findUbicacionesEnRangoKmPaseadores(ubicacionDefault.getLatitud(),
+						ubicacionDefault.getLongitud(), parametroService.getParametro(KM_BUSQUEDA).getValorNumber()));
+		model.addAttribute("vistaMapa", parametroService.getParametro(VISTA_MAPA).getValorNumber());
+		if (request.isUserInRole("ADMIN")) {
+			model.addAttribute("mascota", mascotaDetalleService.listarMascotasDetalle());
+			model.addAttribute("cliente", personaDetalleService.listarTodosPersonaDetalle());
+		}
 		return "content-page/paseo-crear";
 	}
 
 	@GetMapping("/editarPaseador/{idpaseo}")
 	public String editarPaseador(@PathVariable(value = "idpaseo") int codigo, Model model) {
+		var idusuariologueado = arnuvUtils.getLoggedInUsername();
+		Ubicacion ubicacionDefault = ubicacionService.ubicacionPersonaPorDefecto(idusuariologueado.getId());
 		Paseo itemrecuperado = paseoService.buscarPorId(codigo);
-		Ubicacion ubicacionCliente = ubicacionService.ubicacionPersonaPorDefecto(itemrecuperado.getIdpersonacliente().getId());
-		List <Ubicacion> listUbicacionCliente = new ArrayList<>();;
-		listUbicacionCliente.add(ubicacionCliente);
-		Parametros linkMapaGoogle = parametroService.getParametro(KEY_LINK_MAPA_GOOGLE);
+		Ubicacion ubicacionCliente = ubicacionService
+				.ubicacionPersonaPorDefecto(itemrecuperado.getIdpersonacliente().getId());
+		model.addAttribute("ubicacionCliente", ubicacionCliente);
+		model.addAttribute("ubicacionDefault", ubicacionDefault);
+		model.addAttribute("vistaMapa", parametroService.getParametro(VISTA_MAPA).getValorNumber());
 		model.addAttribute("nuevo", itemrecuperado);
 		model.addAttribute("persona", personaDetalleService.listarTodosPersonaDetalle());
 		model.addAttribute("tarifario", ITarifarioService.listarTarifarios());
 		model.addAttribute("mascota", mascotaDetalleService.listarMascotasDetalle());
-		model.addAttribute("ubicacion", listUbicacionCliente);
-		model.addAttribute("linkMapaGoogle", linkMapaGoogle);
 		return "content-page/paseo-paseador-crear";
 	}
 
@@ -224,10 +251,10 @@ public class PaseosController {
 		Paseo itemrecuperado = paseoService.buscarPorId(codigo);
 		System.out.println(itemrecuperado.getEstado());
 		Parametros linkMapaGoogle = parametroService.getParametro(KEY_LINK_MAPA_GOOGLE);
-		Calificacion calificacion =  calificacionService.findByIdpaseoId(codigo);
-		String errorMessag= Strings.EMPTY;
-		if(calificacion == null && itemrecuperado.getEstado().equals(ESTADO_PASEO_FINALIZADO)) {
-			errorMessag ="Tienes que calificar el paseo antes de finalizar";
+		Calificacion calificacion = calificacionService.findByIdpaseoId(codigo);
+		String errorMessag = Strings.EMPTY;
+		if (calificacion == null && itemrecuperado.getEstado().equals(ESTADO_PASEO_FINALIZADO)) {
+			errorMessag = "Tienes que calificar el paseo antes de finalizar";
 		}
 		model.addAttribute("nuevo", itemrecuperado);
 		model.addAttribute("paseoID", itemrecuperado.getId());
@@ -240,18 +267,20 @@ public class PaseosController {
 	}
 
 	@PostMapping("/finalizarPaseo")
-	public String finalizarPaseo(@ModelAttribute("nuevo") Paseo nuevo, HttpServletRequest request,Model model) throws UnsupportedEncodingException, MessagingException {
-		Calificacion calificacion =  calificacionService.findByIdpaseoId(nuevo.getId());
-		if(calificacion == null) {
+	public String finalizarPaseo(@ModelAttribute("nuevo") Paseo nuevo, HttpServletRequest request, Model model)
+			throws UnsupportedEncodingException, MessagingException {
+		Calificacion calificacion = calificacionService.findByIdpaseoId(nuevo.getId());
+		if (calificacion == null) {
 			model.addAttribute("error", "Tienes que calificar el paseo antes de finalizar");
 			return "redirect:/paseo/editarCliente/".concat(String.valueOf(nuevo.getId()));
-		}else {
-			
+		} else {
+
 			Personadetalle personadetalle = personaDetalleService.buscarPorId(nuevo.getIdpersonapasedor().getId());
-			String htmlContent = new String(parametroService.getParametro(KEY_PLANTILLA_MAIL).getArchivos(), StandardCharsets.UTF_8);
+			String htmlContent = new String(parametroService.getParametro(KEY_PLANTILLA_MAIL).getArchivos(),
+					StandardCharsets.UTF_8);
 
 			String fechaRealInicio = nuevo.getFecharealinicio().toString();
-			String fechaEspanol= Strings.EMPTY;
+			String fechaEspanol = Strings.EMPTY;
 			try {
 				Date fecha = FECHA_FORMATO_ENTRADA.parse(fechaRealInicio);
 				fechaEspanol = FECHA_FORMATO_SALIDA.format(fecha);
@@ -262,11 +291,14 @@ public class PaseosController {
 			Date date = new Date();
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd' 'HH:mm");
 			String formattedDate = formatter.format(date);
-			
+
 			if (nuevo.getEstado().equals(ESTADO_FINALIZADO)) {
-				String mensajeDinamico = "LA SOLICITUD DEL SERVICIO CAMBIO A "+ESTADO_FINALIZADO+" FECHA:" + formattedDate+", REVISA TU BANDEJA DE PASEOS !!";
-				htmlContent = htmlContent.replace("{{mensajeBienvenida}}", "<p style=\"font-size: 14px; line-height: 140%; text-align: center;\"><span style=\"font-family: Lato, sans-serif; font-size: 16px; line-height: 22.4px;\">" + mensajeDinamico.toUpperCase() + "</span></p>");
-				emailSender.sendEmail(personadetalle.getEmail(), "SOLICITUD DE SERVICIO", htmlContent);								
+				String mensajeDinamico = "LA SOLICITUD DEL SERVICIO CAMBIO A " + ESTADO_FINALIZADO + " FECHA:"
+						+ formattedDate + ", REVISA TU BANDEJA DE PASEOS !!";
+				htmlContent = htmlContent.replace("{{mensajeBienvenida}}",
+						"<p style=\"font-size: 14px; line-height: 140%; text-align: center;\"><span style=\"font-family: Lato, sans-serif; font-size: 16px; line-height: 22.4px;\">"
+								+ mensajeDinamico.toUpperCase() + "</span></p>");
+				emailSender.sendEmail(personadetalle.getEmail(), "SOLICITUD DE SERVICIO", htmlContent);
 			}
 			paseoService.insertarPaseo(nuevo);
 			return "redirect:/paseo/listar";
