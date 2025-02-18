@@ -75,7 +75,8 @@
 								class="readonly-select block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-multiselect focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray">
 									<option value="0" selected>Seleccione una persona</option>
 									<option th:each="persona : ${persona}"
-										th:text="${persona.nombres}+' '+${persona.apellidos}" th:value="${persona.id}"></option>
+										th:text="${persona.nombres}+' '+${persona.apellidos}"
+										th:value="${persona.id}"></option>
 
 							</select>
 							</label>
@@ -179,15 +180,25 @@
 					<script
 						src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
 
+
+					<script th:inline="javascript">
+						window.ubicacionDefault = {
+							latitud : "[[${ubicacionDefault.latitud}]]",
+							longitud : "[[${ubicacionDefault.longitud}]]",
+							descripcion : "[[${ubicacionDefault.descripcion}]]",
+							isDefault : "[[${ubicacionDefault.isDefault}]]"
+						};
+						window.vistaMapa = "[[${vistaMapa}]]";
+					</script>
 					<script th:inline="javascript">
 						window.paseadoresData = [
-						/*[# th:each="paseador : ${listaPaseadores}"]*/
-						{
-							latitud : "[[${paseador.latitud}]]",
-							longitud : "[[${paseador.longitud}]]",
-							nombre : '[[${paseador.idpersona.nombres}]] [[${paseador.idpersona.apellidos}]]',
-							codigo : "[[${paseador.idpersona.id}]]"
-						},
+								/*[# th:each="paseador : ${listaPaseadores}"]*/
+								{
+									latitud : "[[${paseador.latitud}]]",
+									longitud : "[[${paseador.longitud}]]",
+									nombre : '[[${paseador.idpersona.nombres}]] [[${paseador.idpersona.apellidos}]]',
+									codigo : "[[${paseador.idpersona.id}]]"
+								},
 						/*[/]*/
 						];
 					</script>
