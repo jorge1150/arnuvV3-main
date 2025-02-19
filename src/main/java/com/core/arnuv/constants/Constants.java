@@ -11,6 +11,7 @@ public class Constants {
     public static final String KEY_RADIO = "RADIO";
     public static final String KEY_PLANTILLA_MAIL = "PLANTILLAMAIL";
     public static final String KEY_MAIL_INFO_PASEADOR = "MAILINFOPASEADOR";
+    public static final String KEY_MAIL_RECUPERACION_PASSWORD = "MAILRECUPERACIONPASSWORD";
     public static final String KEY_MAIL_CLIENTE = "MAILCLIENTE";
     public static final String KEY_LINK_MAPA_GOOGLE = "LINKMAPAGOOGLE";
     public static final int EARTH_RADIUS = 6371;

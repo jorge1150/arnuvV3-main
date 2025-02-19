@@ -394,16 +394,13 @@ public class AuthController {
 	}
 
 	private void enviarCorreoRecuperacion(String email, String token) throws Exception {
-		String urlRecuperacion = "<a href=\"" + parametroService.getParametro(URL_DOMAIN_MAIL).getValorText()
-				+ "/auth/restablecer?token=" + token + "\">Clic para restablecer la contraseña</a>";
-		String htmlContent = new String(parametroService.getParametro(KEY_PLANTILLA_MAIL).getArchivos(),
+		String urlRecuperacion = parametroService.getParametro(URL_DOMAIN_MAIL).getValorText()
+				+ "/auth/restablecer?token=" + token;
+		String htmlContent = new String(parametroService.getParametro(KEY_MAIL_RECUPERACION_PASSWORD).getArchivos(),
 				StandardCharsets.UTF_8);
-		String mensajeDinamico = "BIENVENIDO A LA FUNDACION ARNUV! <br> CAMBIA TU CONTRASEÑA EN EL SIGUIENTE ENLACE: <br>"
-				+ urlRecuperacion;
-		htmlContent = htmlContent.replace("{{mensajeBienvenida}}",
-				"<p style=\"font-size: 14px; line-height: 140%; text-align: center;\"><span style=\"font-family: Lato, sans-serif; font-size: 16px; line-height: 22.4px;\">"
-						+ mensajeDinamico + "</span></p>");
-		emailSender.sendEmailRemitentePersonalizado(email, "RESTABLECER CONTRASEÑA", htmlContent);
+		
+		htmlContent = htmlContent.replace("{{enlace}}",urlRecuperacion);
+		emailSender.sendEmail(email, "RECUPERACIÓN DE PASSWORD", htmlContent);
 	}
 
 	private String encriptarContrasena(String contrasena) {
