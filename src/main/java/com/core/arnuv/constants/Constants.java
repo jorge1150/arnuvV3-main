@@ -9,6 +9,8 @@ public class Constants {
     public static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@(.+)$";
     public static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
     public static final String KEY_RADIO = "RADIO";
+    public static final String KM_BUSQUEDA = "KMBUSQUEDA";
+    public static final String VISTA_MAPA = "VISTAMAPA";
     public static final String KEY_PLANTILLA_MAIL = "PLANTILLAMAIL";
     public static final String KEY_MAIL_INFO_PASEADOR = "MAILINFOPASEADOR";
     public static final String KEY_MAIL_RECUPERACION_PASSWORD = "MAILRECUPERACIONPASSWORD";
