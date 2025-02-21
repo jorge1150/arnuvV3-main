@@ -92,6 +92,9 @@ public class UbicacionServiceImp implements IUbicacionService {
 	@Override
 	public Set<Ubicacion> findUbicacionesEnRangoKmPaseadores(double latitud, double longitud, double rangoKm) {
 		Set<Personadetalle> paseadores = repoRol.getAllByRolePerson(RolEnum.ROLE_WALKER.getValue());
+		paseadores = paseadores.stream().filter(
+				p -> p.getUsuariodetalles().get(0).getEstado() != null && p.getUsuariodetalles().get(0).getEstado())
+				.collect(Collectors.toSet());
 		return repo.findUbicacionesEnRangoKm(paseadores.stream().map(Personadetalle::getId).collect(Collectors.toSet()),
 				latitud, longitud, rangoKm);
 	}
