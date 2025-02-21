@@ -302,7 +302,7 @@ public class AuthController {
 				model.addAttribute("error", "El correo electronico no se encuentra registrado.");
 				return "landing/recuperar-pass";
 			}
-			if(!usuario.isEnabled()) {
+			if(!usuario.getEstado()) {
 				model.addAttribute("error", "Lo lamentamos, pero no puedes solicitar la recuperación de la contraseña tu usuario fué deshabilitado.");
 				return "landing/recuperar-pass";
 			}
