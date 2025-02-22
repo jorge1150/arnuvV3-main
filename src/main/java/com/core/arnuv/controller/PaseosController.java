@@ -57,6 +57,7 @@ public class PaseosController {
 	private final ArnuvUtils arnuvUtils;
 	private final EmailSender emailSender;
 	private final ICalificacionService calificacionService;
+	public final IMascotaDetalleService mscotaDetalleService;
 
 	@GetMapping("/listar")
 	public String listar(Model model, HttpServletRequest request) {
@@ -146,8 +147,7 @@ public class PaseosController {
 			nuevo.setIdpersonacliente(personaCLiente);
 		}
 		Personadetalle personadetalle = personaDetalleService.buscarPorId(nuevo.getIdpersonapasedor().getId());
-		String htmlContent = new String(parametroService.getParametro(KEY_PLANTILLA_MAIL).getArchivos(),
-				StandardCharsets.UTF_8);
+	
 
 		String fechaRealInicio = nuevo.getFecharealinicio().toString();
 		String fechaEspanol = Strings.EMPTY;
@@ -158,49 +158,94 @@ public class PaseosController {
 			log.error("Ocurrio un error: {}", e.getMessage());
 		}
 		if (nuevo.getEstado().equals(ESTADO_PENDIENTE)) {
-			String mensajeDinamico = "SOLICITUD DE SERVICIO DE PASEO A MASCOTA ! FECHA:" + fechaEspanol
-					+ ", REVISA TU BANDEJA DE PASEOS !!";
-			htmlContent = htmlContent.replace("{{mensajeBienvenida}}",
-					"<p style=\"font-size: 14px; line-height: 140%; text-align: center;\"><span style=\"font-family: Lato, sans-serif; font-size: 16px; line-height: 22.4px;\">"
-							+ mensajeDinamico.toUpperCase() + "</span></p>");
+			String htmlContent = new String(parametroService.getParametro(KEY_MAIL_SOLICITUD_PASEO).getArchivos(),
+					StandardCharsets.UTF_8);
+			var mascota=mscotaDetalleService.buscarMascotaID(Integer.parseInt(nuevo.getIdMascota().getIdmascota().toString()));
+			var tarifa=ITarifarioService.buscarPorId(Integer.parseInt(nuevo.getIdtarifario().getId().toString()));
+			String nombreMascota=mascota!=null?mascota.getNombre():"";
+			String razaMascota=mascota!=null?mascota.getFkcatalogodetalle().getNombre():"";
+			String tamano=mascota!=null?mascota.getTamanoPerro().toString():"";
+			String edad=mascota!=null?mascota.getEdad().toString():"";
+			htmlContent = htmlContent.replace("{{fecha}}",fechaEspanol);
+			htmlContent = htmlContent.replace("{{mascota}}", nombreMascota+" "+razaMascota +" "+tamano);
+			htmlContent = htmlContent.replace("{{edad}}",edad);
+			htmlContent = htmlContent.replace("{{tarifa}}","$ "+tarifa.getPrecio());
+			htmlContent = htmlContent.replace("{{observaciones}}",nuevo.getObservacionpaseo()!=null?nuevo.getObservacionpaseo():"N/A");
 			emailSender.sendEmail(personadetalle.getEmail(), "SOLICITUD DE SERVICIO", htmlContent);
 		}
 		if (nuevo.getEstado().equals(ESTADO_APROBADO)) {
-			Personadetalle personaCliente = personaDetalleService.buscarPorId(nuevo.getIdpersonacliente().getId());
-			String mensajeDinamico = "SU SOLICITUD DE SERVICIO FUE " + ESTADO_APROBADO + " FECHA:" + formattedDate
-					+ ", REVISA TU BANDEJA DE PASEOS !!";
-			htmlContent = htmlContent.replace("{{mensajeBienvenida}}",
-					"<p style=\"font-size: 14px; line-height: 140%; text-align: center;\"><span style=\"font-family: Lato, sans-serif; font-size: 16px; line-height: 22.4px;\">"
-							+ mensajeDinamico.toUpperCase() + "</span></p>");
-			emailSender.sendEmail(personaCliente.getEmail(), "SOLICITUD DE SERVICIO", htmlContent);
+			String htmlContent = new String(parametroService.getParametro(KEY_MAIL_APROBACION_PASEO).getArchivos(),
+					StandardCharsets.UTF_8);
+			var mascota=mscotaDetalleService.buscarMascotaID(Integer.parseInt(nuevo.getIdMascota().getIdmascota().toString()));
+			var tarifa=ITarifarioService.buscarPorId(Integer.parseInt(nuevo.getIdtarifario().getId().toString()));
+			var personaCliente = personaDetalleService.buscarPorId(nuevo.getIdpersonacliente().getId());
+			String nombreMascota=mascota!=null?mascota.getNombre():"";
+			String razaMascota=mascota!=null?mascota.getFkcatalogodetalle().getNombre():"";
+			String tamano=mascota!=null?mascota.getTamanoPerro().toString():"";
+			String edad=mascota!=null?mascota.getEdad().toString():"";
+			htmlContent = htmlContent.replace("{{fecha}}",fechaEspanol);
+			htmlContent = htmlContent.replace("{{mascota}}", nombreMascota+" "+razaMascota +" "+tamano);
+			htmlContent = htmlContent.replace("{{edad}}",edad);
+			htmlContent = htmlContent.replace("{{tarifa}}","$ "+tarifa.getPrecio());
+			htmlContent = htmlContent.replace("{{observaciones}}",nuevo.getObservacionpaseo()!=null?nuevo.getObservacionpaseo():"N/A");
+			emailSender.sendEmail(personaCliente.getEmail(), "CONFIRMACION DE SERVICIO", htmlContent);
+			String correoAdministrador=parametroService.getParametro(KEY_MAIL_ADMINISTRADOR).getValorText();
+			emailSender.sendEmail(correoAdministrador, "CONFIRMACION DE SERVICIO", htmlContent);
 		}
 		if (nuevo.getEstado().equals(ESTADO_RECHAZADO)) {
-			Personadetalle personaCliente = personaDetalleService.buscarPorId(nuevo.getIdpersonacliente().getId());
-			String mensajeDinamico = "SU SOLICITUD DE SERVICIO FUE " + ESTADO_RECHAZADO + " FECHA:" + formattedDate
-					+ ", REVISA TU BANDEJA DE PASEOS !!";
-			htmlContent = htmlContent.replace("{{mensajeBienvenida}}",
-					"<p style=\"font-size: 14px; line-height: 140%; text-align: center;\"><span style=\"font-family: Lato, sans-serif; font-size: 16px; line-height: 22.4px;\">"
-							+ mensajeDinamico.toUpperCase() + "</span></p>");
-			emailSender.sendEmail(personaCliente.getEmail(), "SOLICITUD DE SERVICIO", htmlContent);
+			String htmlContent = new String(parametroService.getParametro(KEY_MAIL_RECHAZO_PASEO).getArchivos(),
+					StandardCharsets.UTF_8);
+			var mascota=mscotaDetalleService.buscarMascotaID(Integer.parseInt(nuevo.getIdMascota().getIdmascota().toString()));
+			var tarifa=ITarifarioService.buscarPorId(Integer.parseInt(nuevo.getIdtarifario().getId().toString()));
+			var personaCliente = personaDetalleService.buscarPorId(nuevo.getIdpersonacliente().getId());
+			String nombreMascota=mascota!=null?mascota.getNombre():"";
+			String razaMascota=mascota!=null?mascota.getFkcatalogodetalle().getNombre():"";
+			String tamano=mascota!=null?mascota.getTamanoPerro().toString():"";
+			String edad=mascota!=null?mascota.getEdad().toString():"";
+			htmlContent = htmlContent.replace("{{fecha}}",fechaEspanol);
+			htmlContent = htmlContent.replace("{{mascota}}", nombreMascota+" "+razaMascota +" "+tamano);
+			htmlContent = htmlContent.replace("{{edad}}",edad);
+			htmlContent = htmlContent.replace("{{tarifa}}","$ "+tarifa.getPrecio());
+			htmlContent = htmlContent.replace("{{observaciones}}",nuevo.getObservacionpaseo()!=null?nuevo.getObservacionpaseo():"N/A");
+			emailSender.sendEmail(personaCliente.getEmail(), "RECHAZO DE SERVICIO", htmlContent);
+			String correoAdministrador=parametroService.getParametro(KEY_MAIL_ADMINISTRADOR).getValorText();
+			emailSender.sendEmail(correoAdministrador, "RECHAZO DE SERVICIO", htmlContent);
 		}
 
 		if (nuevo.getEstado().equals(ESTADO_PASEO_FINALIZADO)) {
-			Personadetalle personaCliente = personaDetalleService.buscarPorId(nuevo.getIdpersonacliente().getId());
-			String mensajeDinamico = "SU SOLICITUD DE SERVICIO CAMBIO A " + ESTADO_PASEO_FINALIZADO + " FECHA:"
-					+ formattedDate + ", REVISA TU BANDEJA DE PASEOS !!";
-			htmlContent = htmlContent.replace("{{mensajeBienvenida}}",
-					"<p style=\"font-size: 14px; line-height: 140%; text-align: center;\"><span style=\"font-family: Lato, sans-serif; font-size: 16px; line-height: 22.4px;\">"
-							+ mensajeDinamico.toUpperCase() + "</span></p>");
-			emailSender.sendEmail(personaCliente.getEmail(), "SOLICITUD DE SERVICIO", htmlContent);
+			String htmlContent = new String(parametroService.getParametro(KEY_MAIL_PASEO_FINALIZADO).getArchivos(),
+					StandardCharsets.UTF_8);
+			var mascota=mscotaDetalleService.buscarMascotaID(Integer.parseInt(nuevo.getIdMascota().getIdmascota().toString()));
+			var tarifa=ITarifarioService.buscarPorId(Integer.parseInt(nuevo.getIdtarifario().getId().toString()));
+			var personaCliente = personaDetalleService.buscarPorId(nuevo.getIdpersonacliente().getId());
+			String nombreMascota=mascota!=null?mascota.getNombre():"";
+			String razaMascota=mascota!=null?mascota.getFkcatalogodetalle().getNombre():"";
+			String tamano=mascota!=null?mascota.getTamanoPerro().toString():"";
+			String edad=mascota!=null?mascota.getEdad().toString():"";
+			htmlContent = htmlContent.replace("{{fecha}}",fechaEspanol);
+			htmlContent = htmlContent.replace("{{mascota}}", nombreMascota+" "+razaMascota +" "+tamano);
+			htmlContent = htmlContent.replace("{{edad}}",edad);
+			htmlContent = htmlContent.replace("{{tarifa}}","$ "+tarifa.getPrecio());
+			htmlContent = htmlContent.replace("{{observaciones}}",nuevo.getObservacionpaseo()!=null?nuevo.getObservacionpaseo():"N/A");
+			emailSender.sendEmail(personaCliente.getEmail(), "EL PASEO FINALIZO", htmlContent);
 		}
 
 		if (nuevo.getEstado().equals(ESTADO_FINALIZADO)) {
-			String mensajeDinamico = "LA SOLICITUD DEL SERVICIO CAMBIO A " + ESTADO_FINALIZADO + " FECHA:"
-					+ formattedDate + ", REVISA TU BANDEJA DE PASEOS !!";
-			htmlContent = htmlContent.replace("{{mensajeBienvenida}}",
-					"<p style=\"font-size: 14px; line-height: 140%; text-align: center;\"><span style=\"font-family: Lato, sans-serif; font-size: 16px; line-height: 22.4px;\">"
-							+ mensajeDinamico.toUpperCase() + "</span></p>");
-			emailSender.sendEmail(personadetalle.getEmail(), "SOLICITUD DE SERVICIO", htmlContent);
+			String htmlContent = new String(parametroService.getParametro(KEY_MAIL_CALIFICACION_PASEO).getArchivos(),
+					StandardCharsets.UTF_8);
+			var mascota=mscotaDetalleService.buscarMascotaID(Integer.parseInt(nuevo.getIdMascota().getIdmascota().toString()));
+			var tarifa=ITarifarioService.buscarPorId(Integer.parseInt(nuevo.getIdtarifario().getId().toString()));
+			var paseador = personaDetalleService.buscarPorId(nuevo.getIdpersonapasedor().getId());
+			String nombreMascota=mascota!=null?mascota.getNombre():"";
+			String razaMascota=mascota!=null?mascota.getFkcatalogodetalle().getNombre():"";
+			String tamano=mascota!=null?mascota.getTamanoPerro().toString():"";
+			String edad=mascota!=null?mascota.getEdad().toString():"";
+			htmlContent = htmlContent.replace("{{fecha}}",fechaEspanol);
+			htmlContent = htmlContent.replace("{{mascota}}", nombreMascota+" "+razaMascota +" "+tamano);
+			htmlContent = htmlContent.replace("{{edad}}",edad);
+			htmlContent = htmlContent.replace("{{tarifa}}","$ "+tarifa.getPrecio());
+			htmlContent = htmlContent.replace("{{observaciones}}",nuevo.getObservacionpaseo()!=null?nuevo.getObservacionpaseo():"N/A");
+			emailSender.sendEmail(paseador.getEmail(), "GRACIAS POR TU TRABAJO", htmlContent);
 		}
 
 		paseoService.insertarPaseo(nuevo);
@@ -276,8 +321,7 @@ public class PaseosController {
 		} else {
 
 			Personadetalle personadetalle = personaDetalleService.buscarPorId(nuevo.getIdpersonapasedor().getId());
-			String htmlContent = new String(parametroService.getParametro(KEY_PLANTILLA_MAIL).getArchivos(),
-					StandardCharsets.UTF_8);
+	
 
 			String fechaRealInicio = nuevo.getFecharealinicio().toString();
 			String fechaEspanol = Strings.EMPTY;
@@ -293,12 +337,23 @@ public class PaseosController {
 			String formattedDate = formatter.format(date);
 
 			if (nuevo.getEstado().equals(ESTADO_FINALIZADO)) {
-				String mensajeDinamico = "LA SOLICITUD DEL SERVICIO CAMBIO A " + ESTADO_FINALIZADO + " FECHA:"
-						+ formattedDate + ", REVISA TU BANDEJA DE PASEOS !!";
-				htmlContent = htmlContent.replace("{{mensajeBienvenida}}",
-						"<p style=\"font-size: 14px; line-height: 140%; text-align: center;\"><span style=\"font-family: Lato, sans-serif; font-size: 16px; line-height: 22.4px;\">"
-								+ mensajeDinamico.toUpperCase() + "</span></p>");
-				emailSender.sendEmail(personadetalle.getEmail(), "SOLICITUD DE SERVICIO", htmlContent);
+				String htmlContent = new String(parametroService.getParametro(KEY_MAIL_CALIFICACION_PASEO).getArchivos(),
+						StandardCharsets.UTF_8);
+				var mascota=mscotaDetalleService.buscarMascotaID(Integer.parseInt(nuevo.getIdMascota().getIdmascota().toString()));
+				var tarifa=ITarifarioService.buscarPorId(Integer.parseInt(nuevo.getIdtarifario().getId().toString()));
+				var paseador = personaDetalleService.buscarPorId(nuevo.getIdpersonapasedor().getId());
+				
+				String nombreMascota=mascota!=null?mascota.getNombre():"";
+				String razaMascota=mascota!=null?mascota.getFkcatalogodetalle().getNombre():"";
+				String tamano=mascota!=null?mascota.getTamanoPerro().toString():"";
+				String edad=mascota!=null?mascota.getEdad().toString():"";
+				htmlContent = htmlContent.replace("{{fecha}}",fechaEspanol);
+				htmlContent = htmlContent.replace("{{mascota}}", nombreMascota+" "+razaMascota +" "+tamano);
+				htmlContent = htmlContent.replace("{{edad}}",edad);
+				htmlContent = htmlContent.replace("{{tarifa}}","$ "+tarifa.getPrecio());
+				htmlContent = htmlContent.replace("{{calificacion}}",String.valueOf(calificacion.getCalificacion()));
+				htmlContent = htmlContent.replace("{{observaciones}}",nuevo.getObservacionpaseo()!=null?nuevo.getObservacionpaseo():"N/A");
+				emailSender.sendEmail(paseador.getEmail(), "GRACIAS POR TU TRABAJO", htmlContent);
 			}
 			paseoService.insertarPaseo(nuevo);
 			return "redirect:/paseo/listar";

@@ -146,7 +146,7 @@ public class AuthController {
 
 			Usuariodetalle usuarioEnt = userService.buscarPorEmailOrUserName(personaentity.getEmail());
 			if (Constants.PASEADOR.equals(persona.getTipoPersona())) {
-				return finalizarSolicitudPaseador(persona, personaentity, redirectAttributes, model);
+				return finalizarSolicitudPaseador(persona, redirectAttributes, model);
 			}
 			return finalizarRegistroCliente(usuarioEnt, personaentity, redirectAttributes, model);
 
@@ -157,10 +157,11 @@ public class AuthController {
 		}
 	}
 
-	public String finalizarSolicitudPaseador(PersonaDetalleRequest persona, Personadetalle personaentity,
+	public String finalizarSolicitudPaseador(PersonaDetalleRequest persona,
 			RedirectAttributes redirectAttributes, Model model) {
 		String htmlContent = new String(parametroService.getParametro(KEY_MAIL_INFO_PASEADOR).getArchivos(),
 				StandardCharsets.UTF_8);
+		String correoAdministrador=parametroService.getParametro(KEY_MAIL_ADMINISTRADOR).getValorText();
 		try {
 			htmlContent = htmlContent.replace("{{nombres}}", persona.getNombres() + " " + persona.getApellidos());
 			htmlContent = htmlContent.replace("{{identificacion}}", persona.getIdentificacion());
@@ -192,7 +193,7 @@ public class AuthController {
 			htmlContent = htmlContent.replace("{{tamanosAceptados}}",
 					persona.getTamanosAceptados().stream().map(Enum::name).collect(Collectors.joining(", ")));
 
-			emailSender.sendEmail(personaentity.getEmail(), "SOLICITUD DE PASEADOR", htmlContent);
+			emailSender.sendEmail(correoAdministrador, "SOLICITUD DE PASEADOR", htmlContent);
 			redirectAttributes.addFlashAttribute("info",
 					"Tu solicitud está siendo procesada espera la confirmación por el administrador.");
 			return "redirect:/auth/login";
