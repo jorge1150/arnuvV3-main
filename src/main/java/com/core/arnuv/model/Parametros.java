@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.sql.Clob;
 
 import org.hibernate.annotations.Comment;
 import org.springframework.web.multipart.MultipartFile;

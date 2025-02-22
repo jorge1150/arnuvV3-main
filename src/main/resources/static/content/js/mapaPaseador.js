@@ -50,8 +50,20 @@ function inicializarMapa(ubicacionDefault, ubicacionCliente, vistaMapa) {
       );
     },
     router: L.Routing.osrmv1({
-        language: 'es',  // Configura el idioma de las instrucciones
-        profile: 'foot'  // Puedes cambiar a 'car', 'bike', etc.
-    })
+      language: "es", // Configura el idioma de las instrucciones
+      profile: "foot", // Puedes cambiar a 'car', 'bike', etc.
+    }),
   }).addTo(map);
+
+  setTimeout(() => {
+    let routingContainer = document.querySelector(".leaflet-routing-container");
+    if (routingContainer) {
+      routingContainer.style.backgroundColor = "#2c3e50"; // Fondo oscuro
+      routingContainer.style.color = "white"; // Texto blanco
+      routingContainer.style.borderRadius = "8px";
+      routingContainer.style.padding = "10px";
+      routingContainer.style.maxHeight = "200px"; // Altura máxima antes de aparecer el scroll
+      routingContainer.style.overflowY = "auto";
+    }
+  }, 1000);
 }

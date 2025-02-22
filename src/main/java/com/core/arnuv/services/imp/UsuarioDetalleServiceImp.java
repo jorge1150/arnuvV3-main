@@ -5,7 +5,6 @@ import com.core.arnuv.repository.IUsuarioDetalleRepository;
 import com.core.arnuv.service.IUsuarioDetalleService;
 import com.google.common.hash.Hashing;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;

@@ -31,13 +31,30 @@
 					<div class="block mt-1 text-sm">
 						<h2
 							class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
+						<form action="#" method="get">
+							<div class="flex items-center gap-2 w-full">
+								<select id="rolSelect" name="rol" required
+									class="readonly-select flex-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-multiselect focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray">
+									<option value="0" selected>CUALQUIER ROL</option>
+									<option th:each="item : ${listaRoles}" th:text="${item.nombre}"
+										th:value="${item.nombre}"></option>
+								</select>
+
+								<button type="submit"
+									class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">
+									Buscar</button>
+							</div>
+						</form>
+						<br />
 						<div
 							class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray">
 							<a class="btn btn-outline-secondary" href="#" role="button"
 								th:href="@{/persona/crear}"> <i
 								class="fas fa-plus-circle mr-1 text-secondary"></i> Añadir
+								administrador
 							</a>
 						</div>
+
 					</div>
 					<div class="block text-sm"></div>
 					<div class="w-full overflow-hidden rounded-lg shadow-xs">
@@ -47,14 +64,14 @@
 									<tr
 										class="text-xs font-semibold text-start tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
 										<th scope="col" class="text-primary">Fecha</th>
-										<th scope="col" >Nombres</th>
-										<th scope="col" >Apellidos</th>
-										<th scope="col" >Identificación</th>
+										<th scope="col">Nombres</th>
+										<th scope="col">Apellidos</th>
+										<th scope="col">Identificación</th>
 										<th scope="col" class="estado-column">Teléfono</th>
 										<th scope="col" class="estado-column">Correo</th>
-										<th scope="col" >Ver</th>
-										
-										
+										<th scope="col">Ver</th>
+
+
 
 									</tr>
 								</thead>
@@ -64,9 +81,9 @@
 										class="text-gray-700 dark:text-gray-400">
 										<td class="px-4 py-3"
 											th:text="${#dates.format(datos.fechaingreso, 'yyyy-MM-dd')}"></td>
-										<td  th:text="${datos.nombres}"></td>
-										<td  th:text="${datos.apellidos}"></td>
-										<td  th:text="${datos.identificacion}"></td>
+										<td th:text="${datos.nombres}"></td>
+										<td th:text="${datos.apellidos}"></td>
+										<td th:text="${datos.identificacion}"></td>
 										<td class="estado-column" th:text="${datos.celular}"></td>
 										<td class="estado-column" th:text="${datos.email}"></td>
 										<td class="px-4 py-3">
@@ -78,7 +95,7 @@
 													</a>
 												</div>
 
-											
+
 
 											</div>
 										</td>
@@ -86,12 +103,14 @@
 
 								</tbody>
 							</table>
-				<div
-				    class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray">
-				    <a id="toggleColumn" class="btn btn-outline-secondary" href="#" role="button">
-				        <i class="fas fa-chevron-down mr-1 text-secondary comic-font"> Col.</i>
-				    </a>
-				</div>
+							<div
+								class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray">
+								<a id="toggleColumn" class="btn btn-outline-secondary" href="#"
+									role="button"> <i
+									class="fas fa-chevron-down mr-1 text-secondary comic-font">
+										Col.</i>
+								</a>
+							</div>
 							<script type="text/javascript">
 								$(document).ready(function() {
 									initDataTable();
@@ -104,10 +123,7 @@
 							</script>
 						</div>
 					</div>
-
-
 				</div>
-
 			</div>
 		</main>
 	</div>
