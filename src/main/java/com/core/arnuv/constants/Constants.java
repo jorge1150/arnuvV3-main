@@ -15,6 +15,12 @@ public class Constants {
     public static final String KEY_MAIL_INFO_PASEADOR = "MAILINFOPASEADOR";
     public static final String KEY_MAIL_RECUPERACION_PASSWORD = "MAILRECUPERACIONPASSWORD";
     public static final String KEY_MAIL_CLIENTE = "MAILCLIENTE";
+    public static final String KEY_MAIL_SOLICITUD_PASEO = "MAILSOLICITUDPASEO";
+    public static final String KEY_MAIL_APROBACION_PASEO = "MAILAPROBACIONPASEO";
+    public static final String KEY_MAIL_RECHAZO_PASEO = "MAILRECHAZOPASEO";
+    public static final String KEY_MAIL_PASEO_FINALIZADO = "MAILPASEOFINALIZADO";
+    public static final String KEY_MAIL_CALIFICACION_PASEO = "MAILCALIFICACIONPASEO";
+    public static final String KEY_MAIL_ADMINISTRADOR = "MAILADMINISTRADOR";
     public static final String KEY_LINK_MAPA_GOOGLE = "LINKMAPAGOOGLE";
     public static final int EARTH_RADIUS = 6371;
     public static final String PASEADOR = "Paseador";
