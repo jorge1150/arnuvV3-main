@@ -5,7 +5,10 @@ import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -358,6 +361,39 @@ public class PaseosController {
 			paseoService.insertarPaseo(nuevo);
 			return "redirect:/paseo/listar";
 		}
+	}
+	@GetMapping("/cancelar/{codigo}")
+	public String cancelar(@PathVariable(value = "codigo") int codigo, Model model) throws UnsupportedEncodingException, MessagingException {
+		var paseo=paseoService.buscarPorId(codigo);
+		paseo.setEstado(ESTADO_CANCELADO);
+		String htmlContent = new String(parametroService.getParametro(KEY_MAIL_CANCELACION_PASEO).getArchivos(),
+				StandardCharsets.UTF_8);
+		String fechaEspanol = Strings.EMPTY;
+		DateTimeFormatter formatterEntrada = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
+		DateTimeFormatter formatterSalida = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+		try {
+		    LocalDateTime fecha = LocalDateTime.parse(paseo.getFecharealinicio().toString(), formatterEntrada);
+		    fechaEspanol = fecha.format(formatterSalida);
+		} catch (DateTimeParseException e) {
+		    log.error("Ocurrió un error al parsear la fecha: {}", e.getMessage());
+		}
+		var mascota=mscotaDetalleService.buscarMascotaID(Integer.parseInt(paseo.getIdMascota().getIdmascota().toString()));
+		var tarifa=ITarifarioService.buscarPorId(Integer.parseInt(paseo.getIdtarifario().getId().toString()));
+		var paseador = personaDetalleService.buscarPorId(paseo.getIdpersonapasedor().getId());
+		
+		String nombreMascota=mascota!=null?mascota.getNombre():"";
+		String razaMascota=mascota!=null?mascota.getFkcatalogodetalle().getNombre():"";
+		String tamano=mascota!=null?mascota.getTamanoPerro().toString():"";
+		String edad=mascota!=null?mascota.getEdad().toString():"";
+		htmlContent = htmlContent.replace("{{fecha}}",fechaEspanol);
+		htmlContent = htmlContent.replace("{{mascota}}", nombreMascota+" "+razaMascota +" "+tamano);
+		htmlContent = htmlContent.replace("{{edad}}",edad);
+		htmlContent = htmlContent.replace("{{tarifa}}","$ "+tarifa.getPrecio());
+		htmlContent = htmlContent.replace("{{observaciones}}",paseo.getObservacionpaseo()!=null?paseo.getObservacionpaseo():"N/A");
+		emailSender.sendEmail(paseador.getEmail(), "CANCELACION DE SERVICIO", htmlContent);
+		paseoService.insertarPaseo(paseo);
+		return "redirect:/paseo/listar";
 	}
 
 	// eliminar
