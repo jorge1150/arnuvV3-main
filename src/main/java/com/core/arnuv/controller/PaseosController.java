@@ -120,7 +120,7 @@ public class PaseosController {
 		var idusuariologueado = arnuvUtils.getLoggedInUsername();
 		model.addAttribute("nuevo", new Paseo());
 		model.addAttribute("persona", personaDetalleService.listarTodosPersonaDetalle());
-		model.addAttribute("tarifario", ITarifarioService.listarTarifarios());
+		model.addAttribute("tarifario", ITarifarioService.buscarPorEstado(true));
 		model.addAttribute("mascota", mascotaDetalleService.findByIdpersonaId(idusuariologueado.getId()));
 
 		Ubicacion ubicacionDefault = ubicacionService.ubicacionPersonaPorDefecto(idusuariologueado.getId());
@@ -150,7 +150,6 @@ public class PaseosController {
 			nuevo.setIdpersonacliente(personaCLiente);
 		}
 		Personadetalle personadetalle = personaDetalleService.buscarPorId(nuevo.getIdpersonapasedor().getId());
-	
 
 		String fechaRealInicio = nuevo.getFecharealinicio().toString();
 		String fechaEspanol = Strings.EMPTY;
@@ -163,91 +162,101 @@ public class PaseosController {
 		if (nuevo.getEstado().equals(ESTADO_PENDIENTE)) {
 			String htmlContent = new String(parametroService.getParametro(KEY_MAIL_SOLICITUD_PASEO).getArchivos(),
 					StandardCharsets.UTF_8);
-			var mascota=mscotaDetalleService.buscarMascotaID(Integer.parseInt(nuevo.getIdMascota().getIdmascota().toString()));
-			var tarifa=ITarifarioService.buscarPorId(Integer.parseInt(nuevo.getIdtarifario().getId().toString()));
-			String nombreMascota=mascota!=null?mascota.getNombre():"";
-			String razaMascota=mascota!=null?mascota.getFkcatalogodetalle().getNombre():"";
-			String tamano=mascota!=null?mascota.getTamanoPerro().toString():"";
-			String edad=mascota!=null?mascota.getEdad().toString():"";
-			htmlContent = htmlContent.replace("{{fecha}}",fechaEspanol);
-			htmlContent = htmlContent.replace("{{mascota}}", nombreMascota+" "+razaMascota +" "+tamano);
-			htmlContent = htmlContent.replace("{{edad}}",edad);
-			htmlContent = htmlContent.replace("{{tarifa}}","$ "+tarifa.getPrecio());
-			htmlContent = htmlContent.replace("{{observaciones}}",nuevo.getObservacionpaseo()!=null?nuevo.getObservacionpaseo():"N/A");
+			var mascota = mscotaDetalleService
+					.buscarMascotaID(Integer.parseInt(nuevo.getIdMascota().getIdmascota().toString()));
+			var tarifa = ITarifarioService.buscarPorId(Integer.parseInt(nuevo.getIdtarifario().getId().toString()));
+			String nombreMascota = mascota != null ? mascota.getNombre() : "";
+			String razaMascota = mascota != null ? mascota.getFkcatalogodetalle().getNombre() : "";
+			String tamano = mascota != null ? mascota.getTamanoPerro().toString() : "";
+			String edad = mascota != null ? mascota.getEdad().toString() : "";
+			htmlContent = htmlContent.replace("{{fecha}}", fechaEspanol);
+			htmlContent = htmlContent.replace("{{mascota}}", nombreMascota + " " + razaMascota + " " + tamano);
+			htmlContent = htmlContent.replace("{{edad}}", edad);
+			htmlContent = htmlContent.replace("{{tarifa}}", "$ " + tarifa.getPrecio());
+			htmlContent = htmlContent.replace("{{observaciones}}",
+					nuevo.getObservacionpaseo() != null ? nuevo.getObservacionpaseo() : "N/A");
 			emailSender.sendEmail(personadetalle.getEmail(), "SOLICITUD DE SERVICIO", htmlContent);
 		}
 		if (nuevo.getEstado().equals(ESTADO_APROBADO)) {
 			String htmlContent = new String(parametroService.getParametro(KEY_MAIL_APROBACION_PASEO).getArchivos(),
 					StandardCharsets.UTF_8);
-			var mascota=mscotaDetalleService.buscarMascotaID(Integer.parseInt(nuevo.getIdMascota().getIdmascota().toString()));
-			var tarifa=ITarifarioService.buscarPorId(Integer.parseInt(nuevo.getIdtarifario().getId().toString()));
+			var mascota = mscotaDetalleService
+					.buscarMascotaID(Integer.parseInt(nuevo.getIdMascota().getIdmascota().toString()));
+			var tarifa = ITarifarioService.buscarPorId(Integer.parseInt(nuevo.getIdtarifario().getId().toString()));
 			var personaCliente = personaDetalleService.buscarPorId(nuevo.getIdpersonacliente().getId());
-			String nombreMascota=mascota!=null?mascota.getNombre():"";
-			String razaMascota=mascota!=null?mascota.getFkcatalogodetalle().getNombre():"";
-			String tamano=mascota!=null?mascota.getTamanoPerro().toString():"";
-			String edad=mascota!=null?mascota.getEdad().toString():"";
-			htmlContent = htmlContent.replace("{{fecha}}",fechaEspanol);
-			htmlContent = htmlContent.replace("{{mascota}}", nombreMascota+" "+razaMascota +" "+tamano);
-			htmlContent = htmlContent.replace("{{edad}}",edad);
-			htmlContent = htmlContent.replace("{{tarifa}}","$ "+tarifa.getPrecio());
-			htmlContent = htmlContent.replace("{{observaciones}}",nuevo.getObservacionpaseo()!=null?nuevo.getObservacionpaseo():"N/A");
+			String nombreMascota = mascota != null ? mascota.getNombre() : "";
+			String razaMascota = mascota != null ? mascota.getFkcatalogodetalle().getNombre() : "";
+			String tamano = mascota != null ? mascota.getTamanoPerro().toString() : "";
+			String edad = mascota != null ? mascota.getEdad().toString() : "";
+			htmlContent = htmlContent.replace("{{fecha}}", fechaEspanol);
+			htmlContent = htmlContent.replace("{{mascota}}", nombreMascota + " " + razaMascota + " " + tamano);
+			htmlContent = htmlContent.replace("{{edad}}", edad);
+			htmlContent = htmlContent.replace("{{tarifa}}", "$ " + tarifa.getPrecio());
+			htmlContent = htmlContent.replace("{{observaciones}}",
+					nuevo.getObservacionpaseo() != null ? nuevo.getObservacionpaseo() : "N/A");
 			emailSender.sendEmail(personaCliente.getEmail(), "CONFIRMACION DE SERVICIO", htmlContent);
-			String correoAdministrador=parametroService.getParametro(KEY_MAIL_ADMINISTRADOR).getValorText();
+			String correoAdministrador = parametroService.getParametro(KEY_MAIL_ADMINISTRADOR).getValorText();
 			emailSender.sendEmail(correoAdministrador, "CONFIRMACION DE SERVICIO", htmlContent);
 		}
 		if (nuevo.getEstado().equals(ESTADO_RECHAZADO)) {
 			String htmlContent = new String(parametroService.getParametro(KEY_MAIL_RECHAZO_PASEO).getArchivos(),
 					StandardCharsets.UTF_8);
-			var mascota=mscotaDetalleService.buscarMascotaID(Integer.parseInt(nuevo.getIdMascota().getIdmascota().toString()));
-			var tarifa=ITarifarioService.buscarPorId(Integer.parseInt(nuevo.getIdtarifario().getId().toString()));
+			var mascota = mscotaDetalleService
+					.buscarMascotaID(Integer.parseInt(nuevo.getIdMascota().getIdmascota().toString()));
+			var tarifa = ITarifarioService.buscarPorId(Integer.parseInt(nuevo.getIdtarifario().getId().toString()));
 			var personaCliente = personaDetalleService.buscarPorId(nuevo.getIdpersonacliente().getId());
-			String nombreMascota=mascota!=null?mascota.getNombre():"";
-			String razaMascota=mascota!=null?mascota.getFkcatalogodetalle().getNombre():"";
-			String tamano=mascota!=null?mascota.getTamanoPerro().toString():"";
-			String edad=mascota!=null?mascota.getEdad().toString():"";
-			htmlContent = htmlContent.replace("{{fecha}}",fechaEspanol);
-			htmlContent = htmlContent.replace("{{mascota}}", nombreMascota+" "+razaMascota +" "+tamano);
-			htmlContent = htmlContent.replace("{{edad}}",edad);
-			htmlContent = htmlContent.replace("{{tarifa}}","$ "+tarifa.getPrecio());
-			htmlContent = htmlContent.replace("{{observaciones}}",nuevo.getObservacionpaseo()!=null?nuevo.getObservacionpaseo():"N/A");
+			String nombreMascota = mascota != null ? mascota.getNombre() : "";
+			String razaMascota = mascota != null ? mascota.getFkcatalogodetalle().getNombre() : "";
+			String tamano = mascota != null ? mascota.getTamanoPerro().toString() : "";
+			String edad = mascota != null ? mascota.getEdad().toString() : "";
+			htmlContent = htmlContent.replace("{{fecha}}", fechaEspanol);
+			htmlContent = htmlContent.replace("{{mascota}}", nombreMascota + " " + razaMascota + " " + tamano);
+			htmlContent = htmlContent.replace("{{edad}}", edad);
+			htmlContent = htmlContent.replace("{{tarifa}}", "$ " + tarifa.getPrecio());
+			htmlContent = htmlContent.replace("{{observaciones}}",
+					nuevo.getObservacionpaseo() != null ? nuevo.getObservacionpaseo() : "N/A");
 			emailSender.sendEmail(personaCliente.getEmail(), "RECHAZO DE SERVICIO", htmlContent);
-			String correoAdministrador=parametroService.getParametro(KEY_MAIL_ADMINISTRADOR).getValorText();
+			String correoAdministrador = parametroService.getParametro(KEY_MAIL_ADMINISTRADOR).getValorText();
 			emailSender.sendEmail(correoAdministrador, "RECHAZO DE SERVICIO", htmlContent);
 		}
 
 		if (nuevo.getEstado().equals(ESTADO_PASEO_FINALIZADO)) {
 			String htmlContent = new String(parametroService.getParametro(KEY_MAIL_PASEO_FINALIZADO).getArchivos(),
 					StandardCharsets.UTF_8);
-			var mascota=mscotaDetalleService.buscarMascotaID(Integer.parseInt(nuevo.getIdMascota().getIdmascota().toString()));
-			var tarifa=ITarifarioService.buscarPorId(Integer.parseInt(nuevo.getIdtarifario().getId().toString()));
+			var mascota = mscotaDetalleService
+					.buscarMascotaID(Integer.parseInt(nuevo.getIdMascota().getIdmascota().toString()));
+			var tarifa = ITarifarioService.buscarPorId(Integer.parseInt(nuevo.getIdtarifario().getId().toString()));
 			var personaCliente = personaDetalleService.buscarPorId(nuevo.getIdpersonacliente().getId());
-			String nombreMascota=mascota!=null?mascota.getNombre():"";
-			String razaMascota=mascota!=null?mascota.getFkcatalogodetalle().getNombre():"";
-			String tamano=mascota!=null?mascota.getTamanoPerro().toString():"";
-			String edad=mascota!=null?mascota.getEdad().toString():"";
-			htmlContent = htmlContent.replace("{{fecha}}",fechaEspanol);
-			htmlContent = htmlContent.replace("{{mascota}}", nombreMascota+" "+razaMascota +" "+tamano);
-			htmlContent = htmlContent.replace("{{edad}}",edad);
-			htmlContent = htmlContent.replace("{{tarifa}}","$ "+tarifa.getPrecio());
-			htmlContent = htmlContent.replace("{{observaciones}}",nuevo.getObservacionpaseo()!=null?nuevo.getObservacionpaseo():"N/A");
+			String nombreMascota = mascota != null ? mascota.getNombre() : "";
+			String razaMascota = mascota != null ? mascota.getFkcatalogodetalle().getNombre() : "";
+			String tamano = mascota != null ? mascota.getTamanoPerro().toString() : "";
+			String edad = mascota != null ? mascota.getEdad().toString() : "";
+			htmlContent = htmlContent.replace("{{fecha}}", fechaEspanol);
+			htmlContent = htmlContent.replace("{{mascota}}", nombreMascota + " " + razaMascota + " " + tamano);
+			htmlContent = htmlContent.replace("{{edad}}", edad);
+			htmlContent = htmlContent.replace("{{tarifa}}", "$ " + tarifa.getPrecio());
+			htmlContent = htmlContent.replace("{{observaciones}}",
+					nuevo.getObservacionpaseo() != null ? nuevo.getObservacionpaseo() : "N/A");
 			emailSender.sendEmail(personaCliente.getEmail(), "EL PASEO FINALIZO", htmlContent);
 		}
 
 		if (nuevo.getEstado().equals(ESTADO_FINALIZADO)) {
 			String htmlContent = new String(parametroService.getParametro(KEY_MAIL_CALIFICACION_PASEO).getArchivos(),
 					StandardCharsets.UTF_8);
-			var mascota=mscotaDetalleService.buscarMascotaID(Integer.parseInt(nuevo.getIdMascota().getIdmascota().toString()));
-			var tarifa=ITarifarioService.buscarPorId(Integer.parseInt(nuevo.getIdtarifario().getId().toString()));
+			var mascota = mscotaDetalleService
+					.buscarMascotaID(Integer.parseInt(nuevo.getIdMascota().getIdmascota().toString()));
+			var tarifa = ITarifarioService.buscarPorId(Integer.parseInt(nuevo.getIdtarifario().getId().toString()));
 			var paseador = personaDetalleService.buscarPorId(nuevo.getIdpersonapasedor().getId());
-			String nombreMascota=mascota!=null?mascota.getNombre():"";
-			String razaMascota=mascota!=null?mascota.getFkcatalogodetalle().getNombre():"";
-			String tamano=mascota!=null?mascota.getTamanoPerro().toString():"";
-			String edad=mascota!=null?mascota.getEdad().toString():"";
-			htmlContent = htmlContent.replace("{{fecha}}",fechaEspanol);
-			htmlContent = htmlContent.replace("{{mascota}}", nombreMascota+" "+razaMascota +" "+tamano);
-			htmlContent = htmlContent.replace("{{edad}}",edad);
-			htmlContent = htmlContent.replace("{{tarifa}}","$ "+tarifa.getPrecio());
-			htmlContent = htmlContent.replace("{{observaciones}}",nuevo.getObservacionpaseo()!=null?nuevo.getObservacionpaseo():"N/A");
+			String nombreMascota = mascota != null ? mascota.getNombre() : "";
+			String razaMascota = mascota != null ? mascota.getFkcatalogodetalle().getNombre() : "";
+			String tamano = mascota != null ? mascota.getTamanoPerro().toString() : "";
+			String edad = mascota != null ? mascota.getEdad().toString() : "";
+			htmlContent = htmlContent.replace("{{fecha}}", fechaEspanol);
+			htmlContent = htmlContent.replace("{{mascota}}", nombreMascota + " " + razaMascota + " " + tamano);
+			htmlContent = htmlContent.replace("{{edad}}", edad);
+			htmlContent = htmlContent.replace("{{tarifa}}", "$ " + tarifa.getPrecio());
+			htmlContent = htmlContent.replace("{{observaciones}}",
+					nuevo.getObservacionpaseo() != null ? nuevo.getObservacionpaseo() : "N/A");
 			emailSender.sendEmail(paseador.getEmail(), "GRACIAS POR TU TRABAJO", htmlContent);
 		}
 
@@ -324,7 +333,6 @@ public class PaseosController {
 		} else {
 
 			Personadetalle personadetalle = personaDetalleService.buscarPorId(nuevo.getIdpersonapasedor().getId());
-	
 
 			String fechaRealInicio = nuevo.getFecharealinicio().toString();
 			String fechaEspanol = Strings.EMPTY;
@@ -340,22 +348,25 @@ public class PaseosController {
 			String formattedDate = formatter.format(date);
 
 			if (nuevo.getEstado().equals(ESTADO_FINALIZADO)) {
-				String htmlContent = new String(parametroService.getParametro(KEY_MAIL_CALIFICACION_PASEO).getArchivos(),
+				String htmlContent = new String(
+						parametroService.getParametro(KEY_MAIL_CALIFICACION_PASEO).getArchivos(),
 						StandardCharsets.UTF_8);
-				var mascota=mscotaDetalleService.buscarMascotaID(Integer.parseInt(nuevo.getIdMascota().getIdmascota().toString()));
-				var tarifa=ITarifarioService.buscarPorId(Integer.parseInt(nuevo.getIdtarifario().getId().toString()));
+				var mascota = mscotaDetalleService
+						.buscarMascotaID(Integer.parseInt(nuevo.getIdMascota().getIdmascota().toString()));
+				var tarifa = ITarifarioService.buscarPorId(Integer.parseInt(nuevo.getIdtarifario().getId().toString()));
 				var paseador = personaDetalleService.buscarPorId(nuevo.getIdpersonapasedor().getId());
-				
-				String nombreMascota=mascota!=null?mascota.getNombre():"";
-				String razaMascota=mascota!=null?mascota.getFkcatalogodetalle().getNombre():"";
-				String tamano=mascota!=null?mascota.getTamanoPerro().toString():"";
-				String edad=mascota!=null?mascota.getEdad().toString():"";
-				htmlContent = htmlContent.replace("{{fecha}}",fechaEspanol);
-				htmlContent = htmlContent.replace("{{mascota}}", nombreMascota+" "+razaMascota +" "+tamano);
-				htmlContent = htmlContent.replace("{{edad}}",edad);
-				htmlContent = htmlContent.replace("{{tarifa}}","$ "+tarifa.getPrecio());
-				htmlContent = htmlContent.replace("{{calificacion}}",String.valueOf(calificacion.getCalificacion()));
-				htmlContent = htmlContent.replace("{{observaciones}}",nuevo.getObservacionpaseo()!=null?nuevo.getObservacionpaseo():"N/A");
+
+				String nombreMascota = mascota != null ? mascota.getNombre() : "";
+				String razaMascota = mascota != null ? mascota.getFkcatalogodetalle().getNombre() : "";
+				String tamano = mascota != null ? mascota.getTamanoPerro().toString() : "";
+				String edad = mascota != null ? mascota.getEdad().toString() : "";
+				htmlContent = htmlContent.replace("{{fecha}}", fechaEspanol);
+				htmlContent = htmlContent.replace("{{mascota}}", nombreMascota + " " + razaMascota + " " + tamano);
+				htmlContent = htmlContent.replace("{{edad}}", edad);
+				htmlContent = htmlContent.replace("{{tarifa}}", "$ " + tarifa.getPrecio());
+				htmlContent = htmlContent.replace("{{calificacion}}", String.valueOf(calificacion.getCalificacion()));
+				htmlContent = htmlContent.replace("{{observaciones}}",
+						nuevo.getObservacionpaseo() != null ? nuevo.getObservacionpaseo() : "N/A");
 				emailSender.sendEmail(paseador.getEmail(), "GRACIAS POR TU TRABAJO", htmlContent);
 			}
 			paseoService.insertarPaseo(nuevo);

@@ -29,12 +29,19 @@ public class TarifariosController {
 	@GetMapping("/nuevo")
 	public String crearTarifario(Model model) {
 		model.addAttribute("nuevo", new Tarifario());
-		return "content-page/tarifario-crear"; 
+		return "content-page/tarifario-crear";
 	}
 
 	// guardar
 	@PostMapping("/insertar")
-	public String guardarTarifario(@ModelAttribute("nuevo") Tarifario nuevo) {	
+	public String guardarTarifario(@ModelAttribute("nuevo") Tarifario nuevo) {
+		List<Tarifario> tarifas = tarifarioService.listarTarifarios();
+		for (Tarifario tarifario : tarifas) {
+			if (tarifario.getActivo()) {
+				tarifario.setActivo(false);
+				tarifarioService.insertarTarifario(tarifario);
+			}
+		}
 		nuevo.setActivo(true);
 		tarifarioService.insertarTarifario(nuevo);
 		return "redirect:/tarifario/listar";

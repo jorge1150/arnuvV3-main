@@ -3,7 +3,6 @@ package com.core.arnuv.services.imp;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -29,11 +28,13 @@ public class TarifarioServiceImp implements ITarifarioService {
 
 	@Override
 	public Tarifario actualizarTarifario(Tarifario data) {
-		/*Tarifario existeTarifario = repo.findById(data.getId()).orElse(null);
-		existeTarifario.setNombre(data.getNombre());
-		existeTarifario.setTiempo(data.getTiempo());
-		existeTarifario.setPrecio(data.getPrecio());
-		existeTarifario.setActivo(data.getActivo());*/
+		/*
+		 * Tarifario existeTarifario = repo.findById(data.getId()).orElse(null);
+		 * existeTarifario.setNombre(data.getNombre());
+		 * existeTarifario.setTiempo(data.getTiempo());
+		 * existeTarifario.setPrecio(data.getPrecio());
+		 * existeTarifario.setActivo(data.getActivo());
+		 */
 		return repo.save(data);
 	}
 
@@ -50,8 +51,12 @@ public class TarifarioServiceImp implements ITarifarioService {
 			// TODO: handle exception
 			System.out.println("Error al eliminar item");
 		}
-		
+
 	}
-	
-	
+
+	@Override
+	public List<Tarifario> buscarPorEstado(Boolean estado) {
+		return repo.buscarPorEstado(estado);
+	}
+
 }

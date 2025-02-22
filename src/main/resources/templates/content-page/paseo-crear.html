@@ -104,8 +104,7 @@
 								class="text-gray-700 dark:text-gray-400"> Tiempo a pasear</span>
 								<select id="opcionesTarifa" th:field="*{idtarifario.id}"
 								onchange="mostrarObservacionesLabel()" required
-								class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-multiselect focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray">
-									<option value="0" selected>Seleccione una tarifa</option>
+								class="readonly-select block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-multiselect focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray">
 									<option th:each="tarifario : ${tarifario}"
 										th:text="${tarifario.nombre}+ '  valor : $'+${tarifario.precio} "
 										th:value="${tarifario.id}"
