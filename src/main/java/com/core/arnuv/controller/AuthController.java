@@ -59,11 +59,6 @@ public class AuthController {
 	private final IEnumOptionService enumOptionService;
 	ObjectMapper objectMapper = new ObjectMapper();
 
-	@GetMapping("/prueba")
-	public String prueba() {
-		return "landing/prueba";
-	}
-
 	@GetMapping("/login")
 	public String login(Model model, HttpServletRequest request, @AuthenticationPrincipal UserDetails userDetails) {
 		if (userDetails != null) {

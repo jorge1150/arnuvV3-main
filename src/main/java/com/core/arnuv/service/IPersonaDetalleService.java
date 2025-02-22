@@ -1,6 +1,7 @@
 package com.core.arnuv.service;
 
 import java.util.List;
+import java.util.Set;
 
 import com.core.arnuv.model.Personadetalle;
 import com.core.arnuv.request.PersonaDetalleRequest;
@@ -29,5 +30,12 @@ public interface IPersonaDetalleService {
 
 	Personadetalle guardarInformacionCompleta(PersonaDetalleRequest persona, UsuarioDetalleRequest usuario,
 			List<RecordAcademicoRequest> recordAcademico) throws Exception;
-
+	
+	Set<Personadetalle> listarAdministradores();
+	
+	Set<Personadetalle> listarPaseadores();
+	
+	Set<Personadetalle> listarClientes();
+	
+	Set<Personadetalle> listarPersonas();
 }

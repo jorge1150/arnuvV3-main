@@ -4,6 +4,7 @@ import com.core.arnuv.constants.Constants;
 import com.core.arnuv.enums.RolEnum;
 import com.core.arnuv.model.*;
 import com.core.arnuv.repository.IPersonaDetalleRepository;
+import com.core.arnuv.repository.IUsuarioRolRepository;
 import com.core.arnuv.request.PersonaDetalleRequest;
 import com.core.arnuv.request.RecordAcademicoRequest;
 import com.core.arnuv.request.UsuarioDetalleRequest;
@@ -17,7 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Component
@@ -29,6 +32,7 @@ public class PersonaDetalleServiceImp implements IPersonaDetalleService {
 	private final IUsuarioDetalleService userService;
 	private final IRolService servicioRol;
 	private final IUsuarioRolService servicioUsuarioRol;
+	private final IUsuarioRolRepository repoRol;
 	private final IRecordAcademicoService academicoService;
 
 	@Override
@@ -137,7 +141,7 @@ public class PersonaDetalleServiceImp implements IPersonaDetalleService {
 			recordA.setInstitution(recordAcademico.getInstitution());
 			recordA.setNivelAcademico(recordAcademico.getNivelAcademico());
 			recordA.setPersona(personaEnt);
-			 var recordGuardado=academicoService.guardarRecordAcademico(recordA);
+			var recordGuardado = academicoService.guardarRecordAcademico(recordA);
 		}
 	}
 
@@ -195,5 +199,25 @@ public class PersonaDetalleServiceImp implements IPersonaDetalleService {
 		usuariorol.setIdusuario(usuario);
 		usuariorol.setId(usuariorolId);
 		servicioUsuarioRol.insertarUsuarioRol(usuariorol);
+	}
+
+	@Override
+	public Set<Personadetalle> listarPaseadores() {
+		return repoRol.getAllByRolePerson(RolEnum.ROLE_WALKER.getValue());
+	}
+
+	@Override
+	public Set<Personadetalle> listarClientes() {
+		return repoRol.getAllByRolePerson(RolEnum.ROLE_USER.getValue());
+	}
+
+	@Override
+	public Set<Personadetalle> listarAdministradores() {
+		return repoRol.getAllByRolePerson(RolEnum.ROLE_ADMIN.getValue());
+	}
+
+	@Override
+	public Set<Personadetalle> listarPersonas() {
+		return new HashSet<>(repo.findAll());
 	}
 }
