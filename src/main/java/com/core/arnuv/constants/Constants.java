@@ -20,12 +20,14 @@ public class Constants {
     public static final String KEY_MAIL_RECHAZO_PASEO = "MAILRECHAZOPASEO";
     public static final String KEY_MAIL_PASEO_FINALIZADO = "MAILPASEOFINALIZADO";
     public static final String KEY_MAIL_CALIFICACION_PASEO = "MAILCALIFICACIONPASEO";
+    public static final String KEY_MAIL_CANCELACION_PASEO = "MAILCANCELACIONPASEO";
     public static final String KEY_MAIL_ADMINISTRADOR = "MAILADMINISTRADOR";
     public static final String KEY_LINK_MAPA_GOOGLE = "LINKMAPAGOOGLE";
     public static final int EARTH_RADIUS = 6371;
     public static final String PASEADOR = "Paseador";
     public static final String ESTADO_PENDIENTE = "PENDIENTE";
     public static final String ESTADO_APROBADO = "APROBADO";
+    public static final String ESTADO_CANCELADO = "CANCELADO";
     public static final String ESTADO_PASEO_FINALIZADO = "PASEO_FINALIZADO";
     public static final String ESTADO_FINALIZADO = "FINALIZADO";
     public static final String ESTADO_RECHAZADO = "RECHAZADO";

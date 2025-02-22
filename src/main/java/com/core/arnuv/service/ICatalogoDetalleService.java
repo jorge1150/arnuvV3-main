@@ -17,6 +17,6 @@ public interface ICatalogoDetalleService {
 
 	public CatalogoDetalle buscarCatalogoDetalleId(int idCatalogo);
 	
-	public void eliminarCatalogoDetalle(int idCataldoDetalle);
+	public boolean eliminarCatalogoDetalle(int idCataldoDetalle);
 
 }

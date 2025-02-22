@@ -37,11 +37,13 @@ public class CatalogoDetalleServiceImp implements ICatalogoDetalleService {
 	}
 	
 	@Override
-	public void eliminarCatalogoDetalle(int codigo) {
+	public boolean eliminarCatalogoDetalle(int codigo) {
 		try {
 			repo.deleteById(codigo);
+			return true;
 		} catch (Exception e) {
 			System.out.println("Error al eliminar item");
+			return false;
 		}
 	}
 }
