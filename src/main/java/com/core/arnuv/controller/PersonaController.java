@@ -1,6 +1,7 @@
 package com.core.arnuv.controller;
 
 import com.core.arnuv.model.Personadetalle;
+import com.core.arnuv.model.RecordAcademico;
 import com.core.arnuv.model.Ubicacion;
 import com.core.arnuv.model.Usuariodetalle;
 import com.core.arnuv.model.Usuariorol;
@@ -8,6 +9,7 @@ import com.core.arnuv.request.PersonaDetalleRequest;
 import com.core.arnuv.service.IEnumOptionService;
 import com.core.arnuv.service.IParametroService;
 import com.core.arnuv.service.IPersonaDetalleService;
+import com.core.arnuv.service.IRecordAcademicoService;
 import com.core.arnuv.service.IRolService;
 import com.core.arnuv.service.IUbicacionService;
 import com.core.arnuv.service.IUsuarioDetalleService;
@@ -30,6 +32,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.thymeleaf.util.StringUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -52,6 +55,7 @@ public class PersonaController {
 	private final IRolService rolService;
 	private final EmailSender emailSender;
 	private final IEnumOptionService enumOptionService;
+	private final IRecordAcademicoService academicoService;
 
 	@GetMapping("/listar")
 	public String listarPersonas(@RequestParam(value = "rol", required = false, defaultValue = "") String rol,
@@ -158,6 +162,64 @@ public class PersonaController {
 			model.addAttribute("recordsAcademicos", itemrecuperado.getRecordAcademico());
 		}
 		return "content-page/persona-perfil";
+	}
+
+	@PostMapping("actualizar-perfil")
+	private String actualizarPerfil(@ModelAttribute("nuevo") Personadetalle personadetalle, Model model,
+			RedirectAttributes redirectAttributes, HttpServletRequest request) {
+		try {
+			Personadetalle personaBuscada = servicioPersonaDetalle.buscarPorId(personadetalle.getId());
+			boolean banderaCorreo = !personaBuscada.getEmail().equals(personadetalle.getEmail());
+			boolean banderaTelefono = !personaBuscada.getCelular().equals(personadetalle.getCelular());
+
+			if (banderaCorreo) {
+				String errorCorreo = servicioPersonaDetalle.verificarCorreo(personadetalle.getEmail());
+				if (errorCorreo != null && !errorCorreo.trim().isEmpty()) {
+					redirectAttributes.addFlashAttribute("errordata", errorCorreo);
+					return "redirect:/persona/perfil";
+				}
+			}
+
+			if (banderaTelefono) {
+				String errorTelefono = servicioPersonaDetalle.verificarTelefono(personadetalle.getCelular());
+				if (errorTelefono != null && !errorTelefono.trim().isEmpty()) {
+					redirectAttributes.addFlashAttribute("errordata", errorTelefono);
+					return "redirect:/persona/perfil";
+				}
+			}
+			if (request.isUserInRole("PASEADOR")) {
+				for (RecordAcademico recordAcademico : personadetalle.getRecordAcademico()) {
+					if (recordAcademico.getId().equals(0)) {
+						recordAcademico.setId(null);
+						recordAcademico.setPersona(personadetalle);
+						recordAcademico.setEstaEliminado(true);
+					}
+				}
+			}
+			personadetalle.setFechaingreso(personaBuscada.getFechaingreso());
+			personadetalle.setFechamodificacion(new Date());
+			servicioPersonaDetalle.insertarPersonaDetalle(personadetalle);
+			Ubicacion ubicacionBuscada = ubicacionService.ubicacionPersonaPorDefecto(personadetalle.getId());
+			ubicacionBuscada.setLatitud(personadetalle.getUbicaciones().get(0).getLatitud());
+			ubicacionBuscada.setLongitud(personadetalle.getUbicaciones().get(0).getLongitud());
+			ubicacionService.insertarUbicacion(ubicacionBuscada);
+			if (request.isUserInRole("PASEADOR")) {
+				for (RecordAcademico recordAcademico : personadetalle.getRecordAcademico()) {
+					if (recordAcademico.getId() == null) {
+						recordAcademico.setPersona(personadetalle);
+						recordAcademico.setEstaEliminado(true);
+						academicoService.guardarRecordAcademico(recordAcademico);
+					}
+				}
+			}
+			return "redirect:/home";
+		} catch (DataIntegrityViolationException e) {
+			String errorMessage;
+			errorMessage = "Error al guardar datos: Se ha detectado un problema con los datos ingresados.";
+			model.addAttribute("errordata", errorMessage);
+			model.addAttribute("nuevo", personadetalle);
+			return "content-page/persona-perfil";
+		}
 	}
 
 	@PostMapping("/inavilitaUsuario")

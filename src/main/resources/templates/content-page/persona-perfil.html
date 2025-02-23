@@ -25,6 +25,7 @@
 	width: 250px;
 }
 </style>
+<script th:src="@{/content/js/validaciones.js}" defer></script>
 </head>
 <body>
 <body>
@@ -33,11 +34,13 @@
 			class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
 			Perfil</h2>
 		<div id="map"></div>
-		<form th:action="@{/persona/create-access}" th:object="${nuevo}"
+		<form th:action="@{/persona/actualizar-perfil}" th:object="${nuevo}"
 			class="form-material" method="post" enctype="multipart/form-data"
 			id="formulario">
 			<div
 				class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
+				<input id="codigo" type="hidden" th:field="*{id}"
+					class="form-control" placeholder="" />
 				<h2 class="text-lg font-semibold">Información personal</h2>
 				<br /> <label class="block text-sm"> <span
 					class="text-gray-700 dark:text-gray-400">Identificación</span> <input
@@ -131,6 +134,7 @@
 					<table class="min-w-full table-auto mt-4 border w-full">
 						<thead>
 							<tr class="bg-gray-200">
+								<th class="px-4 py-2 text-left">ID</th>
 								<th class="px-4 py-2 text-left">Nivel</th>
 								<th class="px-4 py-2 text-left">Institución</th>
 								<th class="px-4 py-2 text-left">Año</th>
@@ -139,25 +143,36 @@
 							</tr>
 						</thead>
 						<tbody id="tabla-body">
-							<tr th:each="record : ${recordsAcademicos}">
-								<td class="px-4 py-2" style="font-size: 14px;"
-									th:text="${record.nivelAcademico}"></td>
-								<td class="px-4 py-2" style="font-size: 14px;"
-									th:text="${record.institution}"></td>
-								<td class="px-4 py-2" style="font-size: 14px;"
-									th:text="${record.anioGraduacion}"></td>
-								<td class="px-4 py-2" style="font-size: 14px;"
-									th:text="${record.estadoAcademico}"></td>
-								<td class="px-4 py-2" style="font-size: 14px;">
-									<button onclick="eliminarFila(this)"
-										class="px-2 py-1 bg-red-600 !bg-red-600 text-white rounded">Eliminar</button>
-								</td>
+							<tr th:each="record, iterStat : *{recordAcademico}">
+								<td><input type="text" class="px-4 py-2"
+									style="font-size: 14px;"
+									th:field="*{recordAcademico[__${iterStat.index}__].id}"
+									readonly></td>
+								<td><input type="text" class="px-4 py-2"
+									style="font-size: 14px;"
+									th:field="*{recordAcademico[__${iterStat.index}__].nivelAcademico}"
+									readonly></td>
+								<td><input type="text" class="px-4 py-2"
+									style="font-size: 14px;"
+									th:field="*{recordAcademico[__${iterStat.index}__].institution}"
+									readonly></td>
+								<td><input type="text" class="px-4 py-2"
+									style="font-size: 14px;"
+									th:field="*{recordAcademico[__${iterStat.index}__].anioGraduacion}"
+									readonly></td>
+								<td><input type="text" class="px-4 py-2"
+									style="font-size: 14px;"
+									th:field="*{recordAcademico[__${iterStat.index}__].estadoAcademico}"
+									readonly></td>
+
 							</tr>
 						</tbody>
 					</table>
+
 				</div>
 				<h2
 					class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
+				<div id="error-text" th:if="${errordata}" style="display: none;"></div>
 				<div>
 					<button type="submit"
 						class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">
@@ -166,6 +181,7 @@
 				<div th:if="${errordata != null}">
 					<p id="error-data" th:text="${errordata}" style="color: red;"></p>
 				</div>
+
 			</div>
 		</form>
 		<script>
@@ -264,6 +280,7 @@
     // Función para agregar una fila
     function agregarFila() {
         // Obtener valores de los inputs
+        const codigo = 0;
         const nivel = document.getElementById("nivel").value.trim();
         const institucion = document.getElementById("institucion").value.trim().toUpperCase();
         const anio = document.getElementById("anio").value.trim();
@@ -283,16 +300,17 @@
         // Crear una nueva fila
         const tablaBody = document.getElementById("tabla-body");
         const nuevaFila = document.createElement("tr");
+        const indice = tablaBody.getElementsByTagName("tr").length; // Para generar índices únicos
 
         nuevaFila.innerHTML = `
-            <td class="px-4 py-2" style="font-size: 14px;">${nivel}</td>
-            <td class="px-4 py-2" style="font-size: 14px;">${institucion}</td>
-            <td class="px-4 py-2" style="font-size: 14px;">${anio}</td>
-            <td class="px-4 py-2" style="font-size: 14px;">${estado}</td>
-            <td class="px-4 py-2" style="font-size: 14px;">
-                <button onclick="eliminarFila(this)" class="px-2 py-1 bg-red-600 !bg-red-600 text-white rounded">Eliminar</button>
-            </td>
+            <td><input type="hidden" name="recordAcademico[${indice}].id" value="${codigo}" /></td>
+            <td><input type="text" name="recordAcademico[${indice}].nivelAcademico" value="${nivel}" readonly class="px-4 py-2" style="font-size: 14px;"></td>
+            <td><input type="text" name="recordAcademico[${indice}].institution" value="${institucion}" readonly class="px-4 py-2" style="font-size: 14px;"></td>
+            <td><input type="text" name="recordAcademico[${indice}].anioGraduacion" value="${anio}" readonly class="px-4 py-2" style="font-size: 14px;"></td>
+            <td><input type="text" name="recordAcademico[${indice}].estadoAcademico" value="${estado}" readonly class="px-4 py-2" style="font-size: 14px;"></td>
+            <td class="px-4 py-2"><button onclick="eliminarFila(this)" class="px-2 py-1 bg-red-600 text-white rounded">Eliminar</button></td>
         `;
+
 
         // Agregar la fila a la tabla
         tablaBody.appendChild(nuevaFila);

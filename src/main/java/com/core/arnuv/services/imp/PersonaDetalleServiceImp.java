@@ -141,7 +141,7 @@ public class PersonaDetalleServiceImp implements IPersonaDetalleService {
 			recordA.setInstitution(recordAcademico.getInstitution());
 			recordA.setNivelAcademico(recordAcademico.getNivelAcademico());
 			recordA.setPersona(personaEnt);
-			var recordGuardado = academicoService.guardarRecordAcademico(recordA);
+			academicoService.guardarRecordAcademico(recordA);
 		}
 	}
 
@@ -219,5 +219,23 @@ public class PersonaDetalleServiceImp implements IPersonaDetalleService {
 	@Override
 	public Set<Personadetalle> listarPersonas() {
 		return new HashSet<>(repo.findAll());
+	}
+
+	@Override
+	public String verificarCorreo(String email) {
+		String error = Strings.EMPTY;
+		if (buscarEmail(email) != null) {
+			error = "El correo electronico ya se encuentra registrado";
+		}
+		return error;
+	}
+
+	@Override
+	public String verificarTelefono(String celular) {
+		String error = Strings.EMPTY;
+		if (buscarPorCelular(celular) != null) {
+			error = "El celular ya se encuentra registrado";
+		}
+		return error;
 	}
 }
