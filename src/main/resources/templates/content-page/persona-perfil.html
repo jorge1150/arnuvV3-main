@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html x-data="data()" xmlns:th="https://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{content-page/plantilla}">
+<head>
+<title>Perfil</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<link rel="stylesheet" th:href="@{/content/css/tailwind.output.css}" />
+<link rel="stylesheet" th:href="@{/content/css/styles.css}">
+<script
+	src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"
+	defer></script>
+<script th:src="@{/content/js/init-alpine.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<style>
+#map {
+	height: 150px;
+	width: 100%;
+}
+
+#coords {
+	margin-top: 10px;
+	padding: 5px;
+	width: 250px;
+}
+</style>
+</head>
+<body>
+<body>
+	<div layout:fragment="espaciocontenidohtml">
+		<h2
+			class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
+			Perfil</h2>
+		<div id="map"></div>
+		<form th:action="@{/persona/create-access}" th:object="${nuevo}"
+			class="form-material" method="post" enctype="multipart/form-data"
+			id="formulario">
+			<div
+				class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
+				<h2 class="text-lg font-semibold">Información personal</h2>
+				<br /> <label class="block text-sm"> <span
+					class="text-gray-700 dark:text-gray-400">Identificación</span> <input
+					th:field="*{identificacion}" readonly
+					class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+					placeholder="Identificacion" oninput="validaIdentificacion(this)"
+					required />
+				</label>
+				<div id="mensaje-error" style="color: red;"></div>
+				<label class="block text-sm"> <span
+					class="text-gray-700 dark:text-gray-400">Nombres</span> <input
+					th:field="*{nombres}"
+					class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+					placeholder="Nombre" oninput="validaNombreApellido(this)" required />
+				</label> <label class="block text-sm"> <span
+					class="text-gray-700 dark:text-gray-400">Apellidos</span> <input
+					th:field="*{apellidos}"
+					class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+					placeholder="Apellido" oninput="validaNombreApellido(this)"
+					required />
+				</label> <label class="block text-sm"> <span
+					class="text-gray-700 dark:text-gray-400">Celular</span> <input
+					th:field="*{celular}"
+					class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+					placeholder="Celular" oninput="validaNumeroCelular(this)" required />
+					<!--<div id="mensaje-error" style="color: red;"></div>-->
+
+				</label>
+				<div id="mensaje-error-celular" style="color: red;"></div>
+				<label class="block text-sm"> <span
+					class="text-gray-700 dark:text-gray-400">Correo Electronico</span>
+					<input th:field="*{email}"
+					class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+					placeholder="Correo" oninput="validarEmail(this)" required />
+				</label>
+				<div id="mensaje-error-email" style="color: red;"></div>
+				<label class="block text-sm"> <span
+					class="text-gray-700 dark:text-gray-400">Usuario</span> <input
+					th:field="*{usuariodetalles[0].username}" readonly
+					class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+					placeholder="Identificacion" oninput="validaIdentificacion(this)"
+					required />
+				</label> <label class="block text-sm"> <span
+					class="text-gray-700 dark:text-gray-400">latitud</span> <input
+					th:field="*{ubicaciones[0].latitud}" id="latitud" readonly
+					class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+					placeholder="" />
+				</label> <label class="block text-sm"> <span
+					class="text-gray-700 dark:text-gray-400">longitud</span> <input
+					th:field="*{ubicaciones[0].longitud}" id="longitud" readonly
+					class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+					placeholder="" />
+				</label> <br />
+				<div th:if="${tipoPersona == 'Paseador'}">
+					<h2 class="text-lg font-semibold">Perfil Profesional y
+						Experiencia</h2>
+					<br />
+					<!-- Años de experiencia -->
+					<label class="block text-sm w-1/2"> <span
+						class="text-gray-700">Meses de experiencia</span> <input
+						th:field="*{aniosExperiencia}" oninput="validarEdad(this)"
+						type="number"
+						class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+						placeholder="Meses de experiencia" required />
+					</label> <label class="block text-sm"> <span class="text-gray-700">Experiencia
+							previa</span>
+					</label>
+					<textarea th:field="*{experienciaPrevia}"
+						class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+						placeholder="Cuentanos tu experiencia paseando mascotas..."
+						rows="4" required></textarea>
+					<!-- Tamaños aceptados -->
+					<label class="block text-sm w-1/2"> <span
+						class="text-gray-700">Tamaños aceptados (Para escoger
+							varios tener presionado el CTRL)</span> <select
+						th:field="*{tamanosAceptados}"
+						class="form-select block w-full mt-1 text-center focus:border-purple-400 focus:outline-none focus:shadow-outline-purple"
+						id="tamanos" multiple required>
+							<option th:each="item : ${comboTamano}" th:value="${item.value}"
+								th:text="${item.label}"></option>
+					</select>
+					</label> <br />
+					<div class="flex items-center">
+						<h2 class="text-lg font-semibold">Record Académico</h2>
+						<button onclick="abrirModal()" id="registroacademico"
+							class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">
+							+</button>
+					</div>
+					<hr />
+					<br />
+					<table class="min-w-full table-auto mt-4 border w-full">
+						<thead>
+							<tr class="bg-gray-200">
+								<th class="px-4 py-2 text-left">Nivel</th>
+								<th class="px-4 py-2 text-left">Institución</th>
+								<th class="px-4 py-2 text-left">Año</th>
+								<th class="px-4 py-2 text-left">Estado</th>
+								<th class="px-4 py-2 text-left">Acción</th>
+							</tr>
+						</thead>
+						<tbody id="tabla-body">
+							<tr th:each="record : ${recordsAcademicos}">
+								<td class="px-4 py-2" style="font-size: 14px;"
+									th:text="${record.nivelAcademico}"></td>
+								<td class="px-4 py-2" style="font-size: 14px;"
+									th:text="${record.institution}"></td>
+								<td class="px-4 py-2" style="font-size: 14px;"
+									th:text="${record.anioGraduacion}"></td>
+								<td class="px-4 py-2" style="font-size: 14px;"
+									th:text="${record.estadoAcademico}"></td>
+								<td class="px-4 py-2" style="font-size: 14px;">
+									<button onclick="eliminarFila(this)"
+										class="px-2 py-1 bg-red-600 !bg-red-600 text-white rounded">Eliminar</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<h2
+					class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
+				<div>
+					<button type="submit"
+						class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">
+						Actualizar perfil</button>
+				</div>
+				<div th:if="${errordata != null}">
+					<p id="error-data" th:text="${errordata}" style="color: red;"></p>
+				</div>
+			</div>
+		</form>
+		<script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                       //const errorElement = document.querySelector('div[th\\:if="${error != null}"]');
+                       const errorElement = document.querySelector('p[id="error-text"]');
+                       if (errorElement) {
+                           Swal.fire({
+                               icon: 'error',
+                               title: 'Error',
+                               text: errorElement.textContent.trim()
+                           });
+                       }
+                   });
+                </script>
+
+		<script>
+                  document.addEventListener("DOMContentLoaded", function () {
+                      const form = document.querySelector("form");
+                      form.addEventListener("submit", function (event) {
+                          // Obtener todos los elementos de mensaje de error
+                          const mensajesError = [
+                              document.getElementById("mensaje-error"),
+                              document.getElementById("mensaje-error-celular"),
+                              document.getElementById("mensaje-error-email")
+                          ];
+              
+                          // Verificar si algún mensaje de error está visible y tiene contenido
+                          const hayErrores = mensajesError.some(msg => msg && msg.textContent.trim() !== "");
+              
+                          if (hayErrores) {
+                              event.preventDefault(); // Evita que el formulario se envíe
+                              Swal.fire({
+                                  icon: 'error',
+                                  title: 'Error',
+                                  text: 'Corrige los errores antes de continuar.'
+                              });
+                          }
+                      });
+                  });
+              </script>
+
+		<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+		<script>
+				// 📌 PRIMER MAPA: Ubicación del usuario
+		        var map1 = L.map('map').setView([0, 0], 2); // Inicialmente centrado en el mundo
+		        var marker;
+		     // Agregar capa de OpenStreetMap
+		        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		            attribution: '© OpenStreetMap contributors'
+		        }).addTo(map1);
+		     
+		     // Función para ubicar al usuario en ambos mapas
+		        function setUserLocation(position) {
+		        	var lat = parseFloat(document.getElementById("latitud").value);
+		            var lng = parseFloat(document.getElementById("longitud").value);
+
+		            // 📌 Mapa 1: Marcar ubicación
+		            map1.setView([lat, lng], 15);
+		            if (marker) map1.removeLayer(marker);
+		            marker = L.marker([lat, lng]).addTo(map1)
+		                .bindPopup("📍 Tu ubicación: " + lat + ", " + lng)
+		                .openPopup();
+		            document.getElementById('latitud').value = lat;
+		            document.getElementById('longitud').value = lng;
+
+		        }
+		     
+		     // Manejo de errores
+		        function locationError() {
+		            alert("No se pudo obtener tu ubicación. Asegúrate de habilitar el GPS.");
+		        }
+
+		        // Obtener ubicación del usuario
+		        if ("geolocation" in navigator) {
+		            navigator.geolocation.getCurrentPosition(setUserLocation, locationError);
+		        } else {
+		            alert("Tu navegador no soporta la geolocalización.");
+		        }
+
+		        // Evento para seleccionar ubicación en el primer mapa
+		        map1.on('click', function(e) {
+		            var lat = e.latlng.lat.toFixed(6);
+		            var lng = e.latlng.lng.toFixed(6);
+		            document.getElementById('latitud').value = lat;
+		            document.getElementById('longitud').value = lng;
+
+		            if (marker) map1.removeLayer(marker);
+		            marker = L.marker([lat, lng]).addTo(map1)
+		                .bindPopup("Coordenadas: " + lat + ", " + lng)
+		                .openPopup();
+		        });
+              </script>
+
+		<script>
+    // Función para agregar una fila
+    function agregarFila() {
+        // Obtener valores de los inputs
+        const nivel = document.getElementById("nivel").value.trim();
+        const institucion = document.getElementById("institucion").value.trim().toUpperCase();
+        const anio = document.getElementById("anio").value.trim();
+        const estado = document.getElementById("estado").value.trim();
+
+        // Depuración de los valores antes de limpiar
+        console.log("Nivel:", nivel); // Verificar valor de nivel
+        console.log("Institución:", institucion); // Verificar valor de institución
+        console.log("Año:", anio); // Verificar valor de año
+        console.log("Estado:", estado); // Verificar valor de estado
+
+        // Validar que no estén vacíos
+        if (!nivel || !institucion || !anio || !estado) {
+            return;
+        }
+
+        // Crear una nueva fila
+        const tablaBody = document.getElementById("tabla-body");
+        const nuevaFila = document.createElement("tr");
+
+        nuevaFila.innerHTML = `
+            <td class="px-4 py-2" style="font-size: 14px;">${nivel}</td>
+            <td class="px-4 py-2" style="font-size: 14px;">${institucion}</td>
+            <td class="px-4 py-2" style="font-size: 14px;">${anio}</td>
+            <td class="px-4 py-2" style="font-size: 14px;">${estado}</td>
+            <td class="px-4 py-2" style="font-size: 14px;">
+                <button onclick="eliminarFila(this)" class="px-2 py-1 bg-red-600 !bg-red-600 text-white rounded">Eliminar</button>
+            </td>
+        `;
+
+        // Agregar la fila a la tabla
+        tablaBody.appendChild(nuevaFila);
+
+        // Limpiar los inputs (después de agregar la fila)
+        document.getElementById("nivel").value = "";
+        document.getElementById("institucion").value = "";
+        document.getElementById("anio").value = "";
+        document.getElementById("estado").value = "";
+
+        // Mostrar mensaje de éxito en consola
+        console.log("Fila agregada correctamente");
+        cerrarModal();
+    }
+
+    // Función para eliminar una fila
+    function eliminarFila(boton) {
+        // Eliminar la fila correspondiente
+        boton.parentElement.parentElement.remove();
+    }
+
+    // Prevenir que el formulario se envíe (y recargue la página)
+    document.getElementById("formularioTabla").addEventListener("submit", function(event) {
+        event.preventDefault(); // Evita el envío del formulario
+        console.log("Formulario enviado"); // Verificar si el evento se dispara más de una vez
+        
+        // Asegurarse de que agregarFila se llame después del ciclo de eventos
+        setTimeout(function() {
+            agregarFila(); // Llama a la función para agregar la fila
+        }, 100); // Retardo de 100ms para evitar que el formulario se envíe varias veces
+    });
+</script>
+		<script>
+document.getElementById("formulario").addEventListener("submit", function(event) {
+    // Verificar si hay al menos una fila en la tabla
+    const tablaBody = document.getElementById("tabla-body");
+    const esRegistroAcademico = event.submitter && event.submitter.id === "registroacademico";
+
+    if(!esRegistroAcademico){
+      if (tablaBody.rows.length === 0) {
+        Swal.fire({
+                                  icon: 'error',
+                                  title: 'Error',
+                                  text: 'Debe tener al menos un registro en record académico.'
+                              });
+        event.preventDefault(); // Evita que se envíe el formulario
+      }else{
+            // Llamar a la función para agregar los datos de la tabla a recordsAcademicos
+            agregarDatosATabla();
+            // Enviar el formulario normalmente
+            this.submit();
+      }
+    }else{
+      event.preventDefault();
+    }
+});
+	</script>
+
+		<script> 
+	// Esta función recoge los datos de la tabla y los agrega a `nuevo.recordsAcademicos`
+	function agregarDatosATabla() {
+	    var recordsAcademicos = [];
+	    console.log('Inicia llenada de datos');
+
+	    // Recorre las filas de la tabla y recoge los valores
+	    $('#tabla-body tr').each(function() {
+	        var nivel = $(this).find('td').eq(0).text(); // O usa input[name="nivel"]
+	        var institucion = $(this).find('td').eq(1).text().trim().toUpperCase(); // O usa input[name="institucion"]
+	        var anio = $(this).find('td').eq(2).text(); // O usa input[name="anio"]
+	        var estado = $(this).find('td').eq(3).text(); // O usa input[name="estado"]
+	        console.log(nivel,institucion,anio,estado);
+	        // Agrega los datos al arreglo de recordsAcademicos
+	        recordsAcademicos.push({
+	        	nivelAcademico: nivel,
+	        	institution: institucion,
+	        	anioGraduacion: anio,
+	        	estadoAcademico: estado,
+	        	estaEliminado: true
+	        });
+	        console.log(JSON.stringify(recordsAcademicos));
+	    });
+
+	    if (recordsAcademicos.length > 0) {
+	        document.getElementById('recordsAcademicos').value = JSON.stringify(recordsAcademicos);
+	    }
+
+	    // Confirmación en la consola
+	    console.log("JSON generado:", document.getElementById('recordsAcademicos').value);
+	}
+
+	</script>
+
+
+
+		<div id="modal"
+			class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
+			<div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
+
+				<form id="formularioTabla">
+					<div class="flex w-full" th:if="${tipoPersona == 'Paseador'}">
+						<!-- Tabla a la derecha -->
+						<div class="flex-shrink-0 w-1/3 bg-white rounded-lg ">
+							<h2 class="text-lg font-semibold">Record Académico</h2>
+							<hr />
+							<br />
+							<div>
+								<div class="flex space-x-4">
+									<label class="block text-sm"> <span
+										class="text-gray-700">Nivel</span><br /> <select
+										class="form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple"
+										style="width: 250px;" id="nivel" required>
+											<option value="">Seleccione un nivel</option>
+											<option th:each="itemN : ${comboNivel}"
+												th:value="${itemN.value}" th:text="${itemN.label}"></option>
+									</select>
+									</label> <label class="block text-sm"> <span
+										class="text-gray-700">Estado</span> <br /> <select
+										class="form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple"
+										id="estado" required>
+											<option value="">Seleccione un estado</option>
+											<option th:each="itemN : ${comboEstado}"
+												th:value="${itemN.value}" th:text="${itemN.label}"></option>
+									</select>
+									</label>
+								</div>
+								<br />
+								<div class="flex space-x-4">
+									<label class="block text-sm"> <span
+										class="text-gray-700">Institución</span> <input type="text"
+										id="institucion" style="width: 250px;"
+										class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+										placeholder="Ej: Universidad XYZ" required />
+									</label> <br /> <label class="block text-sm"> <span
+										class="text-gray-700">Año de graduación</span> <input
+										type="number" id="anio" style="width: 213px;"
+										class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+										placeholder="Ej: 2025" required />
+									</label>
+								</div>
+								<br />
+								<div class="mt-4 flex justify-end space-x-4">
+									<button onclick="agregarFila()"
+										class="bg-cream px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">Agregar
+										Record</button>
+
+									<button onclick="cerrarModal()" type="button"
+										class="bg-gray-soft px-4 py-2 text-sm font-medium leading-5 text-black transition-colors duration-150 bg-black-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-black-700 focus:outline-none focus:shadow-outline-black">
+										Cerrar</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+
+		<script>
+  function abrirModal() {
+    document.getElementById('modal').classList.remove('hidden');
+}
+
+function cerrarModal() {
+    document.getElementById('modal').classList.add('hidden');
+}
+</script>
+
+	</div>
+</body>
+</html>

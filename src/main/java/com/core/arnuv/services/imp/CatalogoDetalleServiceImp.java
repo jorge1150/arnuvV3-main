@@ -4,7 +4,6 @@ import com.core.arnuv.model.CatalogoDetalle;
 import com.core.arnuv.repository.ICatalogoDetalleRepository;
 import com.core.arnuv.service.ICatalogoDetalleService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 

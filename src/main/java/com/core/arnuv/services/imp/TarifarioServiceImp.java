@@ -44,12 +44,13 @@ public class TarifarioServiceImp implements ITarifarioService {
 	}
 
 	@Override
-	public void eliminarTarifario(int codigo) {
+	public boolean eliminarTarifario(int codigo) {
 		try {
 			repo.deleteById(codigo);
+			return true;
 		} catch (Exception e) {
-			// TODO: handle exception
 			System.out.println("Error al eliminar item");
+			return false;
 		}
 
 	}
