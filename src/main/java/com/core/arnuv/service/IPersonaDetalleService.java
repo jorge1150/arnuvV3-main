@@ -26,16 +26,20 @@ public interface IPersonaDetalleService {
 
 	String verificarDuplicados(String email, String celular, String identificacion);
 
+	String verificarCorreo(String email);
+
+	String verificarTelefono(String celular);
+
 	Personadetalle buscarPorCelular(String celular);
 
 	Personadetalle guardarInformacionCompleta(PersonaDetalleRequest persona, UsuarioDetalleRequest usuario,
 			List<RecordAcademicoRequest> recordAcademico) throws Exception;
-	
+
 	Set<Personadetalle> listarAdministradores();
-	
+
 	Set<Personadetalle> listarPaseadores();
-	
+
 	Set<Personadetalle> listarClientes();
-	
+
 	Set<Personadetalle> listarPersonas();
 }
