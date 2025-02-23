@@ -44,12 +44,14 @@
 							</a>
 						</div>
 						<h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"></h2>
+						<th:block sec:authorize="hasRole('CLIENTE')">
 						<div
 							class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray">
 							<a class="btn btn-outline-secondary" href="#" role="button" th:href="@{/paseo/nuevo}"> <i
 									class="fas fa-plus-circle mr-1 text-secondary"></i> Añadir
 							</a>
 						</div>
+						</th:block>
 					</div>
 					<div class="block text-sm"></div>
 					<div class="w-full overflow-hidden rounded-lg shadow-xs">
@@ -99,6 +101,7 @@
 												</div>
 
 												<!-- Botón de editar, habilitado solo si el estado es 'PENDIENTE' -->
+												<th:block sec:authorize="hasRole('CLIENTE')">
 												<div th:if="${datos.estado == 'PENDIENTE'}"
 													class="bg-cream flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-black-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray">
 													<a th:href="@{/paseo/editar/}+${datos.id}"> <i> <svg class="w-5 h-5"
@@ -111,6 +114,8 @@
 														</i>
 													</a>
 												</div>
+												</th:block>
+												<th:block sec:authorize="hasRole('CLIENTE')">
 												<div th:unless="${datos.estado == 'PENDIENTE'}"
 													class="bg-gray-200 flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-black-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray cursor-not-allowed">
 													<a href="#" class="pointer-events-none"> <i> <svg class="w-5 h-5"
@@ -123,6 +128,8 @@
 														</i>
 													</a>
 												</div>
+												</th:block>
+												<th:block sec:authorize="hasRole('CLIENTE')">
 												<div th:if="${datos.estado == 'PENDIENTE'}"
 													class="bg-cream flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-black-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray">
 													<a th:href="@{/paseo/cancelar/}+${datos.id}"> <i> 													<svg
@@ -141,7 +148,8 @@
 														</i>
 													</a>
 												</div>
-
+												</th:block>
+												<th:block sec:authorize="hasRole('CLIENTE')">
 												<!-- Botón de eliminar, habilitado solo si el estado es 'PENDIENTE' -->
 												<div th:if="${datos.estado == 'PENDIENTE'}"
 													class="bg-cream flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-black-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray">
@@ -155,6 +163,8 @@
 														</i>
 													</a>
 												</div>
+												</th:block>
+												<th:block sec:authorize="hasRole('CLIENTE')">
 												<div th:unless="${datos.estado == 'PENDIENTE'}"
 													class="bg-gray-200 flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-black-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray cursor-not-allowed">
 													<a href="#" class="pointer-events-none"> <i> <svg class="w-5 h-5"
@@ -167,6 +177,7 @@
 														</i>
 													</a>
 												</div>
+												</th:block>
 											</div>
 										</td>
 
