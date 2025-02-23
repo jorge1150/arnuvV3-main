@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.core.arnuv.model.Tarifario;
 import com.core.arnuv.service.ITarifarioService;
@@ -19,11 +20,12 @@ import com.core.arnuv.service.ITarifarioService;
 @RequiredArgsConstructor
 public class TarifariosController {
 	public final ITarifarioService tarifarioService;
+
 	@GetMapping("/listar")
 	public String listarTarifario(Model model) {
-		List<Tarifario> listacatalogos = tarifarioService.listarTarifarios(); 
+		List<Tarifario> listacatalogos = tarifarioService.listarTarifarios();
 		model.addAttribute("lista", listacatalogos);
-		return "content-page/tarifario-listar"; 
+		return "content-page/tarifario-listar";
 	}
 
 	@GetMapping("/nuevo")
@@ -56,9 +58,27 @@ public class TarifariosController {
 
 	// eliminar
 	@GetMapping("/eliminar/{codigo}")
-	public String eliminarTarifario(@PathVariable(value = "codigo") int codigo, Model model) {
-		tarifarioService.eliminarTarifario(codigo);
+	public String eliminarTarifario(@PathVariable(value = "codigo") int codigo, RedirectAttributes redirectAttributes) {
+		try {
+			Tarifario busqueda = tarifarioService.buscarPorId(codigo);
+			if (busqueda.getActivo()) {
+				redirectAttributes.addFlashAttribute("mensaje", "Error, no se puede eliminar una tarifa activa.");
+				redirectAttributes.addFlashAttribute("tipo", "error");
+				return "redirect:/tarifario/listar";
+			}
+			if (tarifarioService.eliminarTarifario(codigo)) {
+				redirectAttributes.addFlashAttribute("mensaje", "La tarifa fué eliminada");
+				redirectAttributes.addFlashAttribute("tipo", "success");
+			} else {
+				redirectAttributes.addFlashAttribute("mensaje",
+						"Error la tarifa no puede ser eliminada porque esta siendo usada por algún paseo.");
+				redirectAttributes.addFlashAttribute("tipo", "error");
+			}
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("mensaje",
+					"Error la tarifa no puede ser eliminada porque esta siendo usada por algún paseo.");
+			redirectAttributes.addFlashAttribute("tipo", "error");
+		}
 		return "redirect:/tarifario/listar";
 	}
-
 }

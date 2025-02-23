@@ -5,6 +5,7 @@ import com.core.arnuv.model.Ubicacion;
 import com.core.arnuv.model.Usuariodetalle;
 import com.core.arnuv.model.Usuariorol;
 import com.core.arnuv.request.PersonaDetalleRequest;
+import com.core.arnuv.service.IEnumOptionService;
 import com.core.arnuv.service.IParametroService;
 import com.core.arnuv.service.IPersonaDetalleService;
 import com.core.arnuv.service.IRolService;
@@ -14,9 +15,13 @@ import com.core.arnuv.service.IUsuarioRolService;
 import com.core.arnuv.services.imp.EmailSender;
 
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,6 +51,7 @@ public class PersonaController {
 	private final IUsuarioRolService usuarioRolService;
 	private final IRolService rolService;
 	private final EmailSender emailSender;
+	private final IEnumOptionService enumOptionService;
 
 	@GetMapping("/listar")
 	public String listarPersonas(@RequestParam(value = "rol", required = false, defaultValue = "") String rol,
@@ -130,6 +136,28 @@ public class PersonaController {
 		model.addAttribute("usuario", usuariodetalle);
 		model.addAttribute("usuariorol", usuariorol);
 		return "content-page/persona-ver";
+	}
+
+	@GetMapping("/perfil")
+	public String perfil(Model model, HttpServletRequest request) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Object principal = authentication.getPrincipal();
+		String username = null;
+		if (principal instanceof UserDetails) {
+			username = ((UserDetails) principal).getUsername();
+		}
+		Usuariodetalle usuariodetalleSession = usuarioDetalleService.buscarPorEmailOrUserName(username);
+		Integer codigo = usuariodetalleSession.getIdpersona().getId();
+		Personadetalle itemrecuperado = servicioPersonaDetalle.buscarPorId(codigo);
+		model.addAttribute("nuevo", itemrecuperado);
+		if (request.isUserInRole("PASEADOR")) {
+			model.addAttribute("tipoPersona", "Paseador");
+			model.addAttribute("comboEstado", enumOptionService.getEstadoAcademicoOptions());
+			model.addAttribute("comboNivel", enumOptionService.getNivelAcademicoOptions());
+			model.addAttribute("comboTamano", enumOptionService.getTamanoPerroOptions());
+			model.addAttribute("recordsAcademicos", itemrecuperado.getRecordAcademico());
+		}
+		return "content-page/persona-perfil";
 	}
 
 	@PostMapping("/inavilitaUsuario")

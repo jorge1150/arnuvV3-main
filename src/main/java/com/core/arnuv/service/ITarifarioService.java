@@ -15,5 +15,5 @@ public interface ITarifarioService {
 
 	public Tarifario buscarPorId(int id);
 
-	public void eliminarTarifario(int id);
+	public boolean eliminarTarifario(int id);
 }
