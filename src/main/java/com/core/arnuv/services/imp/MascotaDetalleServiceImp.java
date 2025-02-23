@@ -61,12 +61,14 @@ public class MascotaDetalleServiceImp implements IMascotaDetalleService {
 	}
 
 	@Override
-	public void EliminarMascotaDetalle(int codigo) {
+	public boolean EliminarMascotaDetalle(int codigo) {
 		try {
 			repo.deleteById(codigo);
+			return true;
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println("Error al eliminar item");
+			return false;
 		}
 	}
 
