@@ -2,12 +2,12 @@ package com.core.arnuv.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import com.core.arnuv.request.PersonaDetalleRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -25,7 +25,6 @@ import com.core.arnuv.utils.ArnuvUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-@Slf4j
 @Controller
 @RequestMapping("/mascota")
 @RequiredArgsConstructor
@@ -60,10 +59,8 @@ public class MascotaController {
 		model.addAttribute("catalogo", catalogoDetalleService.listarCatalogoDetalle());
 		model.addAttribute("comboTamano", enumOptionService.getTamanoPerroOptions());
 		if (request.isUserInRole("ADMIN")) {
-
-			List<Personadetalle> personas = personaDetalleService.listarTodosPersonaDetalle();
-
-			   model.addAttribute("personas", personas); 
+			Set<Personadetalle> personas = personaDetalleService.listarClientes();
+			model.addAttribute("personas", personas);
 		}
 		return "content-page/mascotas-crear";
 	}
