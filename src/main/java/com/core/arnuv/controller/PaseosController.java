@@ -307,7 +307,6 @@ public class PaseosController {
 	public String editarCliente(@PathVariable(value = "idpaseo") int codigo, Model model) {
 		Paseo itemrecuperado = paseoService.buscarPorId(codigo);
 		System.out.println(itemrecuperado.getEstado());
-		Parametros linkMapaGoogle = parametroService.getParametro(KEY_LINK_MAPA_GOOGLE);
 		Calificacion calificacion = calificacionService.findByIdpaseoId(codigo);
 		String errorMessag = Strings.EMPTY;
 		if (calificacion == null && itemrecuperado.getEstado().equals(ESTADO_PASEO_FINALIZADO)) {
@@ -319,7 +318,6 @@ public class PaseosController {
 		model.addAttribute("tarifario", ITarifarioService.listarTarifarios());
 		model.addAttribute("mascota", mascotaDetalleService.listarMascotasDetalle());
 		model.addAttribute("error", errorMessag);
-		model.addAttribute("linkMapaGoogle", linkMapaGoogle);
 		return "content-page/paseo-cliente-ver";
 	}
 
