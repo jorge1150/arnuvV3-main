@@ -21,7 +21,7 @@ public class DataInitializer {
     private final IUsuarioRolRepository usuariorolRepository;
     @PostConstruct
     public void init() {
-        try {
+        /*try {
             Personadetalle persona = new Personadetalle();
             persona.setApellidos("admin");
             persona.setCelular("0967325098");
@@ -53,6 +53,6 @@ public class DataInitializer {
             log.info("Datos iniciales insertados correctamente.");
         } catch (Exception e) {
             log.error("Error al insertar datos iniciales: {}", e.getMessage());
-        }
+        } */
     }
 }

@@ -81,7 +81,6 @@ public class AuthController {
 	/*-----------------------CREAR NUEVO CLIENTE ------------------------*/
 	@GetMapping("/crearCliente/{tipoPersona}")
 	public String personCliente(@PathVariable("tipoPersona") String tipoPersona, Model model) {
-		Parametros linkMapaGoogle = parametroService.getParametro(KEY_LINK_MAPA_GOOGLE);
 		if (Constants.PASEADOR.equals(tipoPersona)) {
 			model.addAttribute("comboEstado", enumOptionService.getEstadoAcademicoOptions());
 			model.addAttribute("comboNivel", enumOptionService.getNivelAcademicoOptions());
@@ -91,7 +90,6 @@ public class AuthController {
 		nuevo.setTipoPersona(tipoPersona);
 		model.addAttribute("tipoPersona", tipoPersona);
 		model.addAttribute("nuevo", nuevo);
-		model.addAttribute("linkMapaGoogle", linkMapaGoogle);
 		return "landing/persona-crear-cliente";
 	}
 
