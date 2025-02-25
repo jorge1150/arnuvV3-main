@@ -16,6 +16,7 @@ public class Constants {
     public static final String KEY_MAIL_RECUPERACION_PASSWORD = "MAILRECUPERACIONPASSWORD";
     public static final String KEY_MAIL_CLIENTE = "MAILCLIENTE";
     public static final String KEY_MAIL_SOLICITUD_PASEO = "MAILSOLICITUDPASEO";
+    public static final String KEY_MAIL_ESTADO = "MAILESTADO";
     public static final String KEY_MAIL_APROBACION_PASEO = "MAILAPROBACIONPASEO";
     public static final String KEY_MAIL_RECHAZO_PASEO = "MAILRECHAZOPASEO";
     public static final String KEY_MAIL_PASEO_FINALIZADO = "MAILPASEOFINALIZADO";

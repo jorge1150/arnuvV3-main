@@ -19,7 +19,6 @@ import com.core.arnuv.services.imp.EmailSender;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,7 +36,6 @@ import org.thymeleaf.util.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Set;
 
@@ -228,37 +226,22 @@ public class PersonaController {
 		Personadetalle personadetalle = servicioPersonaDetalle.buscarPorIdentificacion(nuevo.getIdentificacion());
 		Usuariodetalle usuariodetalle = usuarioDetalleService.buscarpersona(personadetalle.getId());
 
-		String htmlContent = new String(parametroService.getParametro(KEY_PLANTILLA_MAIL).getArchivos(),
-				StandardCharsets.UTF_8);
-
-		String fechaEspanol = Strings.EMPTY;
-		String mensajeDinamico = "";
-
-		Date date = new Date();
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd' 'HH:mm");
-		String formattedDate = formatter.format(date);
-		fechaEspanol = formattedDate;
-
-		Boolean estado = null;
-		if (usuariodetalle.getEstado() == null) {
+		Boolean estado = false;
+		if (usuariodetalle.getEstado() == false) {
 			estado = true;
-			mensajeDinamico = "SU USUARIO A SIDO HABILITADO" + " FECHA:" + fechaEspanol
-					+ ", PUEDES VOLVER INGRESAR AL SISTEMA ARNUV !!";
 		}
 
 		if (Boolean.TRUE.equals(usuariodetalle.getEstado())) {
-			estado = null;
-			mensajeDinamico = "SU  USUARIO A SIDO DESHABILITADO" + " FECHA:" + fechaEspanol
-					+ ", CONTACTATE CON EL ADMINSTRADOR DEL SISTEMA ARNUV !!";
-
+			estado = false;
 		}
 		usuariodetalle.setEstado(estado);
 		usuarioDetalleService.actualizarUsuarioDetalle(usuariodetalle);
 
-		htmlContent = htmlContent.replace("{{mensajeBienvenida}}",
-				"<p style=\"font-size: 14px; line-height: 140%; text-align: center;\"><span style=\"font-family: Lato, sans-serif; font-size: 16px; line-height: 22.4px;\">"
-						+ mensajeDinamico.toUpperCase() + "</span></p>");
-		emailSender.sendEmail(personadetalle.getEmail(), "FUNDACIÓN ARNUV", htmlContent);
+		String htmlContent = new String(parametroService.getParametro(KEY_MAIL_ESTADO).getArchivos(),
+				StandardCharsets.UTF_8);
+		htmlContent = htmlContent.replace("{{estado}}", estado ? "Activo" : "Inactivo");
+
+		emailSender.sendEmail(personadetalle.getEmail(), "ACTIVACIÓN DE CUENTA", htmlContent);
 
 		return "redirect:/persona/listar";
 	}
