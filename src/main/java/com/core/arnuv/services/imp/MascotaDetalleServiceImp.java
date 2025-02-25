@@ -29,29 +29,34 @@ public class MascotaDetalleServiceImp implements IMascotaDetalleService {
 	@Override
 	public MascotaDetalle insertarMascotaDetalle(MascotaDetalle data) throws IOException {
 		System.out.println(data.getPhotoPet().isEmpty());
-		if (data.getIdmascota()!= null){
-			MascotaDetalle existeMascota = repo.findByIdmascota(data.getIdmascota());
-			if (existeMascota != null) {
+		try {
+			if (data.getIdmascota()!= null){
+				MascotaDetalle existeMascota = repo.findByIdmascota(data.getIdmascota());
+				if (existeMascota != null) {
+					log.info("Service for create the sinister");
+					String fileUrl = Strings.EMPTY;
+					if (data.getPhotoPet() != null && !data.getPhotoPet().isEmpty()) {
+						fileUrl = firebaseFileService.saveFile(data.getPhotoPet());
+						log.info("File url: " + fileUrl);
+						data.setUrlPhotoPet(fileUrl);
+					}
+					else {
+						data.setUrlPhotoPet(existeMascota.getUrlPhotoPet());
+					}
+				}
+			}else {
 				log.info("Service for create the sinister");
-				String fileUrl = Strings.EMPTY;
+				String fileUrl;
 				if (data.getPhotoPet() != null && !data.getPhotoPet().isEmpty()) {
 					fileUrl = firebaseFileService.saveFile(data.getPhotoPet());
 					log.info("File url: " + fileUrl);
 					data.setUrlPhotoPet(fileUrl);
 				}
-				else {
-					data.setUrlPhotoPet(existeMascota.getUrlPhotoPet());
-				}
 			}
-		}else {
-			log.info("Service for create the sinister");
-			String fileUrl;
-			if (data.getPhotoPet() != null && !data.getPhotoPet().isEmpty()) {
-				fileUrl = firebaseFileService.saveFile(data.getPhotoPet());
-				log.info("File url: " + fileUrl);
-				data.setUrlPhotoPet(fileUrl);
-			}
+		} catch (Exception e) {
+			data.setUrlPhotoPet("");
 		}
+		
 		return repo.save(data);
 	}
 
