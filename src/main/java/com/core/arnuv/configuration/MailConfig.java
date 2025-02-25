@@ -39,7 +39,7 @@ public class MailConfig {
     }
 
     private String getUsernameFromDatabase() {
-        return serviceParam.getParametro("MAILSENDER").getValorText();
+        return serviceParam.getParametro("MAILUSER").getValorText();
     }
 
     private String getPasswordFromDatabase() {

@@ -21,7 +21,7 @@ public class EmailSender {
             throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
-        helper.setFrom(getUsernameFromDatabase(), "ARNUV FUNDACION");
+        helper.setFrom(getEmailFromDatabase(), "ARNUV FUNDACION");
         helper.setTo(email);
         helper.setSubject(subject);
         helper.setText(content, true);
@@ -33,14 +33,14 @@ public class EmailSender {
         JavaMailSender mailSender = mailConfigService.getJavaMailSender();
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
-        helper.setFrom(getUsernameFromDatabase(), "ARNUV FUNDACION");
+        helper.setFrom(getEmailFromDatabase(), "ARNUV FUNDACION");
         helper.setTo(email);
         helper.setSubject(subject);
         helper.setText(content, true);
         mailSender.send(message);
     }
 
-    private String getUsernameFromDatabase() {
+    private String getEmailFromDatabase() {
         return serviceParam.getParametro("MAILSENDER").getValorText();
     }
 }
